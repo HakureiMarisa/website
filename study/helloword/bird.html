@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>扑腾鸟</title>
+<link rel="stylesheet" href="/assets/plugins/bootstrap/css/bootstrap.min.css" />
+</head>
+<body style="background-color: black;">
+    <div class="container">
+        <canvas id="canvas" height="400" width="600" style="background-color: white;"></canvas>
+    </div>
+</body>
+<script type="text/javascript" src="/assets/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/framework/core/base.js"></script>
+<script type="text/javascript" src="/framework/core/event.js"></script>
+<script type="text/javascript" src="/framework/core/Stage.js"></script>
+<script type="text/javascript" src="/framework/core/Game.js"></script>
+<script type="text/javascript">
+function Bird(opts){
+    this.pause = true;
+    this.y = 200;
+    this.sy = 0;
+    this.ay = 15
+    
+    JM.extend(this, opts);    
+}
+
+Bird.prototype.update = function(timer){
+    if(this.pause) return;
+    this.y += this.sy;
+    this.sy += this.ay * timer.step;
+    
+    if(this.y <= 0){
+        this.y = 0;
+    }
+    
+    if(this.y >= this.height -30 ){
+        this.y = this.height -30;
+        this.pause = true;
+    }
+};
+
+Bird.prototype.render = function(context){
+    context.fillRect(50, this.y, 30, 30);
+};
+
+Bird.prototype.keydown = function(e){
+    if(e.keyCode == JM.Event.KEY.SPACE){
+        this.pause = false;
+        this.sy = -5;
+    }
+};
+
+function Pipe(opts){
+    this.pause = false;
+    this.x = 200;
+    this.y = 300;
+    this.sx = 3;
+    this.w = 50;
+    this.h = 10;
+    
+    JM.extend(this, opts);    
+}
+
+Pipe.prototype.update = function(timer){
+    if(this.pause) return;
+    if(this.x <= -this.w){
+        this.x = this.width + 150;
+        this.h = Math.random() * 250;
+    }
+    if((this.x <= bird.x) && ((this.x +this.w) >= bird.x)){
+        
+    }
+    this.x -= this.sx;
+};
+
+Pipe.prototype.render = function(context){
+    context.fillRect(this.x, 0, this.w, this.h);    
+    context.fillRect(this.x, this.h + 100, this.w, 400);
+};
+
+Pipe.prototype.keydown = function(e){
+    if(e.keyCode == JM.Event.KEY.SPACE){
+        this.pause = false;
+        this.sy = -5;
+    }
+};
+
+
+var canvas = document.getElementById('canvas');
+var context = canvas.getContext('2d');
+var stage = new JM.Stage({
+    context: context,
+    width: 600,
+    height: 400,
+});
+var bird = new Bird({ 
+    width: 600,
+    height: 400,
+});
+JM.Event.delegate('keydown', [bird, 'keydown'], document);
+
+var pipe = new Pipe({ 
+    x: 400,
+    width: 600,
+    height: 400,
+});
+var pipe1 = new Pipe({ 
+    x: 600, 
+    width: 600,
+    height: 400,
+});
+var pipe2 = new Pipe({ 
+    x: 800, 
+    width: 600,
+    height: 400,
+});
+var pipe3 = new Pipe({ 
+    x: 1000, 
+    width: 600,
+    height: 400,
+});
+var pipe_list = [pipe, pipe1, pipe2, pipe3];
+stage.addSprite(bird);
+stage.addSprite(pipe);
+stage.addSprite(pipe1);
+stage.addSprite(pipe2);
+stage.addSprite(pipe3);
+var game = new JM.Game({
+    stage: stage,
+});
+
+window.onload = game.start();
+
+</script>
+</html>

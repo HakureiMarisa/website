@@ -138,7 +138,7 @@ void function(exports) {
   }
   var status; // 'loading', 'ready', 'playing', 'gameover'
   var statusTick;
-  var holdbackMax = 1000;
+  var holdbackMax = 2;
   var holdbackList = new Array(holdbackMax); // 障碍物地图
   var bestNew = false; // 新记录
   function setStatus(value) {

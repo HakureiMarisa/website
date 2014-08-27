@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>你好世界</title>
+<link rel="stylesheet" href="/assets/plugins/bootstrap/css/bootstrap.min.css" />
+</head>
+<body>
+    <canvas id="canvas" height="400" width="600"></canvas>
+</body>
+<script type="text/javascript" src="/assets/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/framework/core/base.js"></script>
+<script type="text/javascript" src="/framework/core/event.js"></script>
+<script type="text/javascript" src="/framework/core/Stage.js"></script>
+<script type="text/javascript" src="/framework/core/Game.js"></script>
+<script type="text/javascript">
+function Word(opts){
+    this.pause = false;
+    JM.extend(this, opts);    
+}
+
+Word.prototype.update = function(){
+    if(this.pause) return;
+    if(((this.x + this.width_font) >= this.width) ||　(this.x <= 0)){
+        this.sx = -this.sx;
+    }
+    if(((this.y) >= this.height) ||　(this.y <= 0)){
+        this.sy = -this.sy;
+    }
+    this.x += this.sx;
+    this.y += this.sy;
+};
+
+Word.prototype.render = function(context){
+    this.width_font = context.measureText(this.text).width;
+    context.font="40px Arial";
+    context.fillText(this.text, this.x, this.y);
+};
+
+Word.prototype.keydown = function(e){
+    if(e.keyCode == JM.Event.KEY.P){
+        this.pause = true;
+    }
+    if(e.keyCode == JM.Event.KEY.R){
+        this.pause = false;
+    }
+};
+
+var canvas = document.getElementById('canvas');
+var context = canvas.getContext('2d');
+var stage = new JM.Stage({
+    context: context,
+    width: 600,
+    height: 400,
+});
+var word = new Word({
+    text: '你好世界',
+    x: 1,
+    y: 20,
+    sx: 1,
+    sy: 2,  
+    width: 600,
+    height: 400,
+});
+JM.Event.delegate('keydown', [word, 'keydown'], document);
+
+stage.addSprite(word);
+
+var game = new JM.Game({
+    stage: stage,
+});
+
+window.onload = game.start();
+
+</script>
+</html>

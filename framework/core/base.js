@@ -16,4 +16,8 @@
         }
         return obj;
     };
+    
+    JM.isArray = function(obj){
+        return Object.prototype.toString.call(obj) === '[object Array]';  
+    };
 })(window);
