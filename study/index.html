@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link href="assets/plugins/bootstrap/css/bootstrap.min.css" />
+</head>
+<body>
+    <div id="a1"></div>
+    <div id="a2"></div>
+    <div id="a3"></div>
+    <div id="a4"></div>
+    <div id="a11"></div>
+    <div id="a12"></div>
+    <div id="a13"></div>
+    <div id="a14"></div>
+    <canvas id="canvas" height="800" width="800"></canvas>
+</body>
+<script type="text/javascript" src="assets/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="assets/js/evlisten.js"></script>
+<script type="text/javascript">
+const FPS = 30;
+const SECONDS_BETWEEN_FRAMES = 1 / FPS;
+
+var bg0 = new Image();
+var bg1 = new Image();
+var bg2 = new Image();
+
+var counter_x = 0;
+var counter_y = 0;
+const RATE_X = 50 * SECONDS_BETWEEN_FRAMES;
+const RATE_Y = 20 * SECONDS_BETWEEN_FRAMES;
+const WIDTH = 500;
+const HEIGHT = 320;
+
+var canvas;
+var canvasBuffer;
+var context;
+var contextBuffer;
+
+window.onload = init;
+var interval;
+function init() {
+    bg0.src = "assets/img/hero.jpg";
+    bg1.src = "assets/img/b1.jpg";
+    bg2.src = "assets/img/b2.jpg";
+    
+    console.log(bg1.width);
+    
+    canvas = document.getElementById("canvas");
+    canvasBuffer = document.createElement("canvas");
+    canvasBuffer.width = canvas.width;
+    canvasBuffer.height = canvas.height;
+    context = canvas.getContext("2d");
+    contextBuffer = canvasBuffer.getContext("2d");
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    contextBuffer.clearRect(0, 0, canvasBuffer.width, canvasBuffer.height);
+    bg1.onload = function(){   //用onload函数作预加载
+        console.log(bg1.width);
+        interval = setInterval(drawTiled, SECONDS_BETWEEN_FRAMES);
+    }
+    //interval = setInterval(animation, SECONDS_BETWEEN_FRAMES);
+}
+
+function drawTiled(){
+    var count_x = Math.ceil(WIDTH / bg1.width);
+    var count_y = Math.ceil(HEIGHT / bg1.height);
+ 
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    contextBuffer.clearRect(0, 0, canvasBuffer.width, canvasBuffer.height);
+    for(var i=0; i<count_x+1; i++){
+        for(var j=0; j<count_y+1; j++){
+            var x = i * bg1.width;
+            var y = j * bg1.height;
+            contextBuffer.drawImage(bg1, x, y);
+        }
+    }
+    
+    
+    counter_x += RATE_X;
+    counter_y += RATE_Y;
+    if(counter_x >= bg1.width){       
+        counter_x = 0;       
+    }
+    if(counter_y >= bg1.height){       
+        counter_y = 0;       
+    }
+    
+    context.drawImage(canvasBuffer, counter_x, counter_y, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT);
+}
+
+function drawBuffer1(image, dx, dy, factor){
+    for(var i=0; i<count_x; i++){
+        for(var j=0; j<count_y; j++){
+            var x = i * bg1.width;
+            var y = j * bg1.height;
+            contextBuffer.drawImage(bg1, x, y);
+        }
+    } 
+}
+
+function animation() {
+    x += RATE;
+    /*if(x > 100){
+        x = 0;
+    }*/
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    contextBuffer.clearRect(0, 0, canvasBuffer.width, canvasBuffer.height);
+    
+    drawBuffer(bg0, 0, 0, 0.5);
+    drawBuffer(bg1, 0, 100, 0.75);
+    drawBuffer(bg2, 0, 100, 1);
+    context.drawImage(canvasBuffer, 0, 0);
+}
+
+function drawBuffer(image, dx, dy, factor) {
+    var left = (x * factor) % image.width;
+    if (left + WIDTH >= image.width) {
+        var d0 = image.width - left;
+        var d1 = WIDTH - d0;
+        //contextBuffer.drawImage(image, left, 0, d0, HEIGHT, dx, dy, d0, HEIGHT);
+        contextBuffer.drawImage(image, 0, 0, d1, HEIGHT, dx + d0, dy, d1, HEIGHT);
+    }
+    else {
+        contextBuffer.drawImage(image, left, 0, WIDTH, HEIGHT, dx, dy, WIDTH, HEIGHT);
+    }
+}
+</script>
+</html>

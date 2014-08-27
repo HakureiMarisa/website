@@ -1,0 +1,12 @@
+@CHARSET "UTF-8";
+
+body {
+	background-color: Scrollbar;
+}
+
+.screen {
+	border-color: wheat;
+	border-style: solid;
+	margin: 0 auto;
+	width: 600px;
+}

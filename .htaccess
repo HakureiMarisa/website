@@ -1,0 +1,11 @@
+RewriteEngine on
+
+RewriteCond %{HTTP_HOST} ^(www.)?aaa.com$
+RewriteCond %{REQUEST_URI} !^/tgh/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^(.*) /tgh/$1
+
+RewriteCond %{HTTP_HOST} ^(www.)?aaa.com$
+RewriteRule ^(/)?$ /tgh/1.html [L]
