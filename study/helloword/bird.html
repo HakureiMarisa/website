@@ -28,6 +28,7 @@ body{background-color: black;}
 <script type="text/javascript" src="/framework/core/event.js"></script>
 <script type="text/javascript" src="/framework/core/Stage.js"></script>
 <script type="text/javascript" src="/framework/core/Game.js"></script>
+<script type="text/javascript" src="/framework/component/Gif.js"></script>
 <script type="text/javascript">
 function Bird(opts){
     this.pause = true;
@@ -101,8 +102,8 @@ Pipe.prototype.render = function(context){
     if(JM.hitTestObject(bird_obj, {x: this.x, y: 0, width: this.w, height: this.h}) || 
   	   JM.hitTestObject(bird_obj, {x: this.x, y: this.h + 100, width: this.w, height: 400})	
     ){
-        clearInterval(s);
-        game.over = true;        
+        //clearInterval(s);
+        //game.over = true;        
     };
     
     if(!this.over && (this.x + this.w) <= bird.x){
@@ -123,6 +124,18 @@ Pipe.prototype.keydown = function(e){
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var score, stage, bird, pipe, pipe1, pipe2, pipe3, game, s;
+var img = new Image();
+img.src = '/study/best/example/flappy/images/flappy_packer.png';
+var d = 0.2;
+var gif = new JM.Gif({
+	width: 82,
+	height: 61,
+	image: img,
+	frames: [[673, 1, d], [673, 62, d], [673, 123, d]]
+});
+
+//console.log(gif);
+
 function init(){
 	score = 0;
 	showScore(score);
@@ -160,7 +173,7 @@ function init(){
 	    width: 600,
 	    height: 400,
 	});
-
+	stage.addSprite(gif);
 	stage.addSprite(bird);
 	stage.addSprite(pipe);
 	stage.addSprite(pipe1);

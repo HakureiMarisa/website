@@ -73,12 +73,10 @@
      * @param {Boolean} usePolyCollision 指定是否采用多边形碰撞。默认为false。
      * @return {Boolean} 发生碰撞为true，否则为false。
      */
-    JM.hitTestObject = function(obj1, obj2, usePolyCollision)
-    {
+    JM.hitTestObject = function(obj1, obj2, usePolyCollision){
     	//var b1 = obj1.getBounds(), b2 = obj2.getBounds();
     	var b1 = obj1, b2 = obj2;
-    	//console.log(b1);
-    	//console.log(b2);
+
     	var hit = b1.x <= b2.x + b2.width && b2.x <= b1.x + b1.width && 
     				   b1.y <= b2.y + b2.height && b2.y <= b1.y + b1.height;
     	
@@ -97,15 +95,13 @@
      * @param {Array} poly2 多边形顶点组成的数组。格式与参数poly1相同。
      * @param {Boolean} 发生碰撞为true，否则为false。 
      */
-    JM.polygonCollision = function(poly1, poly2)
-    {	
+    JM.polygonCollision = function(poly1, poly2){	
     	var result = doSATCheck(poly1, poly2, {overlap:-Infinity, normal:{x:0, y:0}});
     	if(result) return doSATCheck(poly2, poly1, result);
     	return false;
     };
 
-    function doSATCheck(poly1, poly2, result)
-    {
+    function doSATCheck(poly1, poly2, result){
     	var len1 = poly1.length, len2 = poly2.length, currentPoint, nextPoint, distance, min1, max1, min2, max2, dot, overlap, normal = {x:0, y:0};
     	
     	for(var i = 0; i < len1; i++)
