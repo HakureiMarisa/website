@@ -200,6 +200,7 @@ void function(exports) {
   function renderBrid(top, angle, offset) {
     if (typeof offset == 'undefined') {
       offset = parseInt(+new Date() / 150) % bridInfo.offsets.length;
+      //console.log(offset);
     }
 
     if (angle) {
