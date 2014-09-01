@@ -7,7 +7,7 @@
             last: Date.now(),
             step: 0
         };
-        this.timer.last = Date.now();
+        
         if(this.context == null) throw "JM.Stage 必须包含一个context.";
     }
 
@@ -16,20 +16,20 @@
         var last = this.timer.last = this.timer.now
         this.timer.now = now;
         this.timer.step = (now - last)/1000;
-               
+        
         this._render();
-        this._update();
+        this._update();       
     }
 
     Stage.prototype._update = function(){
-        for(i in this.sprites){
-            this.sprites[i].update(this.timer);
+        for(var i in this.sprites){
+            this.sprites[i]._update(this.timer);
         }
     }
     
     Stage.prototype._render = function(){
         this.context.clearRect(0, 0, this.width, this.height);
-        for(i in this.sprites){
+        for(var i in this.sprites){
             this.sprites[i].render(this.context);
         }       
     }

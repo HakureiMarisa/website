@@ -29,6 +29,7 @@ body{background-color: black;}
 <script type="text/javascript" src="/framework/core/Stage.js"></script>
 <script type="text/javascript" src="/framework/core/Game.js"></script>
 <script type="text/javascript" src="/framework/component/Gif.js"></script>
+<script type="text/javascript" src="/framework/component/Sprite.js"></script>
 <script type="text/javascript">
 function Bird(opts){
     this.pause = true;
@@ -128,13 +129,15 @@ var img = new Image();
 img.src = '/study/best/example/flappy/images/flappy_packer.png';
 var d = 0.2;
 var gif = new JM.Gif({
-	width: 82,
-	height: 61,
+	frameSize: [82, 62],
 	image: img,
-	frames: [[673, 1, d], [673, 62, d], [673, 123, d]]
+	frames: [[673, 1, d], [673, 62, d], [673, 123, d], [673, 62, d]],
+	width: 40,
+	height: 30,
 });
-
-//console.log(gif);
+var b = new JM.Sprite({
+	anim: gif
+});
 
 function init(){
 	score = 0;
@@ -173,7 +176,7 @@ function init(){
 	    width: 600,
 	    height: 400,
 	});
-	stage.addSprite(gif);
+	stage.addSprite(b);
 	stage.addSprite(bird);
 	stage.addSprite(pipe);
 	stage.addSprite(pipe1);
