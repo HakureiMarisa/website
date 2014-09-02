@@ -7,7 +7,7 @@
 
     Game.prototype.start = function(){   
         var me = this;
-        setInterval(function(){me.stage.step();}, 1000/this.FPS);
+        s = setInterval(function(){me.stage.step();}, 1000/this.FPS);
     };
     
 })();
