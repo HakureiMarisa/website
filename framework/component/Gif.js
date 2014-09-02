@@ -2,8 +2,7 @@
 	var Gif = JM.Gif = function(opts) {
 		
 		this.image = null;
-		this.width = 0;
-		this.height = 0;		
+	
 		/*
 		 * 帧定义，[[
 		 * x,  : 图片横轴位置
@@ -24,9 +23,11 @@
 		 */
 		this._duration = 0;			    
 
-		JM.extend(this, opts);
+		Gif.superclass.constructor.call(this, opts);
 	};
-
+	JM.inherit(Gif, JM.Sprite);
+	
+	
 	Gif.prototype._gotoFrame = function(index) {
 		if (this.frames[index]) {
 			this.index = index;
@@ -56,7 +57,7 @@
 		this.playing = false;
 	};
 
-	Gif.prototype.update = function(timer) {
+	Gif.prototype._update = function(timer) {
 		if (!this.playing) {
 			
 		}else if(this._duration >= this.frames[this.index][2]) {
@@ -64,10 +65,22 @@
 		}else{		
 			this._duration += timer.step;
 		}
+		Gif.superclass._update.call(this, timer);
 	};
 
 	Gif.prototype.render = function(context){
-		var frame = this.frames[this.index];
-		context.drawImage(this.image, frame[0], frame[1], this.frameSize[0], this.frameSize[1], 0, 0, this.width, this.height);
+	    try{
+            var frame = this.frames[this.index];
+            context.drawImage(this.image, frame[0], frame[1], this.frameSize[0], this.frameSize[1], this.x, this.y, this.width, this.height);
+        }catch(e){
+            var me = this;
+            if(e.name == "NS_ERROR_NOT_AVAILABLE"){
+                // Wait a bit before trying again; you may wish to change the
+                // length of this delay.
+                setTimeout(function(){ me.render(context)}, 1);
+            }else{
+                throw e;
+            }
+        }
 	};
 })();

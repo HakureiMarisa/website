@@ -5,9 +5,15 @@
      * 继承
      */
     JM.inherit = function(childClass, parentClass){
-        childClass.prototype = new parentClass();
+        var Constructor = new Function();
+        Constructor.prototype = parentClass.prototype;
+        childClass.prototype = new Constructor();
         childClass.prototype.constructor = childClass;
         childClass.superclass = parentClass.prototype;
+
+        if(childClass.prototype.constructor == Object.prototype.constructor) {
+            childClass.prototype.constructor = parentClass;
+        }
     };
     
     JM.extend = function(obj, newobj){
