@@ -2,6 +2,8 @@
 	var Gif = JM.Gif = function(opts) {
 		
 		this.image = null;
+		this.width = 0;
+		this.height = 0;		
 		/*
 		 * 帧定义，[[
 		 * x,  : 图片横轴位置
@@ -10,6 +12,7 @@
 		 * ]]
 		 */
 		this.frames = [];
+		this.frameSize = [this.width, this.height];
 		this.loop = true;
 		this.playing = true;
 		/*
@@ -65,7 +68,6 @@
 
 	Gif.prototype.render = function(context){
 		var frame = this.frames[this.index];
-		//console.log(frame);
-		context.drawImage(this.image, frame[0], frame[1], this.width, this.height, 0, 0, 40, 30);
+		context.drawImage(this.image, frame[0], frame[1], this.frameSize[0], this.frameSize[1], 0, 0, this.width, this.height);
 	};
 })();
