@@ -19,7 +19,7 @@ body{background-color: black;}
 <body>
     <div class="container">
     	<span id="score">0</span>
-        <canvas id="canvas" height="400" width="600" style="background-color: white;"></canvas>
+        <canvas id="canvas" height="800" width="600" style="background-color: white;"></canvas>
         <span id="img_text">加载</span>
     </div>
 </body>
@@ -32,78 +32,10 @@ body{background-color: black;}
 <script type="text/javascript" src="/framework/component/Sprite.js"></script>
 <script type="text/javascript" src="/framework/component/Gif.js"></script>
 <script type="text/javascript">
-$(function(){
-    function img(i){
-        
-        $('#img_text').after(i);
-    }
-    
-    for(var i=1; i <= 10; i++){
-        var e_str = "\
-        var image_test"+i+" = new Image();  \
-        image_test"+i+".onload = function() {    \
-            console.log("+i+");                 \
-            img("+i+");                         \
-        };\
-        image_test"+i+".src = 'http://dev.jamieyang.com/study/quarkjs/examples/squirrel/images/body_walk"+i+".png';\
-        ";
-        //eval(e_str);
-    }
-});
-
-
-function Pipe(opts){
-    this.pause = false;
-    this.x = 200;
-    this.y = 300;
-    this.sx = 2;
-    this.w = 50;
-    this.h = Math.random() * 250;
-    this.over = false;
-    
-    JM.extend(this, opts);    
-}
-
-Pipe.prototype.update = function(timer){
-    if(this.pause) return;
-    if(this.x <= -this.w){
-        this.x = this.width + 150;
-        this.h = Math.random() * 250;
-        this.over = false;
-    }
-
-    this.x -= this.sx;
-};
-
-Pipe.prototype.render = function(context){
-    context.fillRect(this.x, 0, this.w, this.h);    
-    context.fillRect(this.x, this.h + 100, this.w, 400);
-        
-    var bird_obj = {x: bird.x, y: bird.y, width: 30, height: 30};
-
-    if(JM.hitTestObject(bird_obj, {x: this.x, y: 0, width: this.w, height: this.h}) || 
-  	   JM.hitTestObject(bird_obj, {x: this.x, y: this.h + 100, width: this.w, height: 400})	
-    ){
-        //clearInterval(s);
-        //game.over = true;        
-    };
-    
-    if(!this.over && (this.x + this.w) <= bird.x){
-    	score++;
-    	this.over = true;
-    	showScore(score);
-    }
-};
-
-Pipe.prototype.keydown = function(e){
-    
-};
-
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var score, stage, bird, pipe, pipe1, pipe2, pipe3, game, s;
 var img = new Image();
-img.src = '/study/best/example/flappy/images/flappy_packer.png';
 
 
 function showScore(){
@@ -111,24 +43,40 @@ function showScore(){
 }
 var pipe = new JM.Sprite({
     pause: false,
-    x: 200,
+    x: 600,
     y: 0,
-    sx: -100,
+    sx: -150,
     width: 100,
-    height: 100 + Math.random() * 200,
+    height: 100 + Math.random() * 500,
     over: false,
+    space: 100,
     update: function(timer){
+        
+        var bird_obj = {x: gif.x, y: gif.y, width: gif.width, height: gif.height};
+        var up = {x: this.x, y: 0, width: this.width, height: this.height};
+        var down = {x: this.x, y: this.height + this.space, width: this.width, height: canvas.height - (this.height + this.space)};
+        if(JM.hitTestObject(bird_obj, up) || 
+           JM.hitTestObject(bird_obj, down) 
+        ){
+            game.pause();      
+        };
+        
+        if(!this.over && (this.x + this.width) <= gif.x){
+            score++;
+            this.over = true;
+            showScore(score);
+        }
+        
         if(this.x <= -this.width){
-            this.x = this.width + 150;
+            this.x = canvas.width + this.width;
             this.height = 100 + Math.random() * 200;
-            console.log(this.height);
             this.over = false;
         }
     },
     render: function(){    
-        context.drawImage(img, 150, 459 + (830 - this.height), 150, this.height, this.x, 0, this.width, this.height);
-        var height = canvas.height - this.height - 50;
-        context.drawImage(img, 0, 459, 150, height, this.x, height, this.width, height);
+        context.drawImage(img, 150, 478 + (810 - this.height), 150, this.height, this.x, 0, this.width, this.height);
+        var height = this.height + this.space;
+        context.drawImage(img, 0, 478, 150, canvas.height - height, this.x, height, this.width, canvas.height - height);
     }
 });
 
@@ -139,14 +87,14 @@ var gif = new JM.Gif({
 	frames: [[673, 0, d], [673, 61, d], [673, 122, d], [673, 61, d]],
 	width: 40,
 	height: 30,
-	sy: -300,
-	ay: 1000,
+	sy: -400,
+	ay: 1500,
 	y: 200,
 	pause: false,
 	keydown :  function(e){
 	    if(e.keyCode == JM.Event.KEY.SPACE){
 	        this.pause = false;
-	        this.sy = -300;
+	        this.sy = -400;
 	    }
 	    if(e.keyCode == JM.Event.KEY.R){
 	        if(game.over)
@@ -169,51 +117,35 @@ var gif = new JM.Gif({
 function init(){
 	score = 0;
 	showScore(score);
-	if(s){
-		 clearInterval(s);
-	}
+
 	stage = new JM.Stage({
 	    context: context,
 	    width: 600,
-	    height: 400,
+	    height: 800,
 	});
 
 	JM.Event.delegate('keydown', [gif, 'keydown'], document);
-/*
-	pipe = new Pipe({ 
-	    x: 400,
-	    width: 600,
-	    height: 400,
-	});
-	pipe1 = new Pipe({ 
-	    x: 600, 
-	    width: 600,
-	    height: 400,
-	});
-	pipe2 = new Pipe({ 
-	    x: 800, 
-	    width: 600,
-	    height: 400,
-	});
-	pipe3 = new Pipe({ 
-	    x: 1000, 
-	    width: 600,
-	    height: 400,
-	});*/
+
 	stage.addSprite(gif);
 	stage.addSprite(pipe);
-	/*
-	stage.addSprite(bird);
-	stage.addSprite(pipe);
-	stage.addSprite(pipe1);
-	stage.addSprite(pipe2);
-	stage.addSprite(pipe3);*/
+
 	game = new JM.Game({
 	    stage: stage,
 	});
-	game.start();
+	
+	img.src = '/study/best/example/flappy/images/flappy_packer.png';
+    if(img.complete){
+        document.addEventListener('keydown', function(e){
+            game.start();
+        }, false);
+    }else{
+        img.onload = function(){
+            game.start();
+            img.onload = null;
+        };
+    };
+    
 }
 window.onload = init;
-
 </script>
 </html>

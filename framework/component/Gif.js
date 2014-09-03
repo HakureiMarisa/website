@@ -72,6 +72,7 @@
 	    try{
             var frame = this.frames[this.index];
             context.drawImage(this.image, frame[0], frame[1], this.frameSize[0], this.frameSize[1], this.x, this.y, this.width, this.height);
+            //context.fillRect(this.x, this.y, this.width, this.height);
         }catch(e){
             var me = this;
             if(e.name == "NS_ERROR_NOT_AVAILABLE"){

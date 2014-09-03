@@ -16,9 +16,9 @@
         var last = this.timer.last = this.timer.now
         this.timer.now = now;
         this.timer.step = (now - last)/1000;
-        
+        this._update(); 
         this._render();
-        this._update();       
+              
     }
 
     Stage.prototype._update = function(){
