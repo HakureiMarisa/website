@@ -13,6 +13,7 @@
 		this.frames = [];
 		this.frameSize = [this.width, this.height];
 		this.loop = true;
+		this.loop_index = 0;
 		this.playing = true;
 		/*
 		 * 第几帧
@@ -39,7 +40,7 @@
 		if (this.index < this.frames.length - 1) {
 			this._gotoFrame(this.index + 1);
 		} else if (this.loop) {
-			this._gotoFrame(0);
+			this._gotoFrame(this.loop_index);
 		} else {
 			this.stop();
 		}

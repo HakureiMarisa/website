@@ -60,7 +60,7 @@ var pipe = new JM.Sprite({
         ){
             game.pause();      
         };
-        
+
         if(!this.over && (this.x + this.width) <= gif.x){
             score++;
             this.over = true;
@@ -97,8 +97,7 @@ var gif = new JM.Gif({
 	        this.sy = -400;
 	    }
 	    if(e.keyCode == JM.Event.KEY.R){
-	        if(game.over)
-	            init();
+	            game.resume();
 	    }
     },
     update: function(timer){
@@ -135,17 +134,21 @@ function init(){
 	
 	img.src = '/study/best/example/flappy/images/flappy_packer.png';
     if(img.complete){
-        document.addEventListener('keydown', function(e){
-            game.start();
-        }, false);
+        document.addEventListener('keydown', ss, false);
     }else{
         img.onload = function(){
-            game.start();
+            document.addEventListener('keydown', ss, false);
             img.onload = null;
         };
     };
     
 }
+
+function ss(e){
+    document.removeEventListener('keydown', ss);
+    game.start(); 
+}
+
 window.onload = init;
 </script>
 </html>

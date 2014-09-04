@@ -7,11 +7,23 @@
             last: Date.now(),
             step: 0
         };
-        
+        this._initFlage = false;
         if(this.context == null) throw "JM.Stage 必须包含一个context.";
     }
 
+    Stage.prototype._init = function(){
+        this.timer = {
+            now: Date.now(),
+            last: Date.now(),
+            step: 0
+        };
+        this._initFlage = true;
+    };
+    
     Stage.prototype.step = function(){  
+        if(!this._initFlage){
+            this._init();
+        }
         var now = Date.now();       
         var last = this.timer.last = this.timer.now
         this.timer.now = now;

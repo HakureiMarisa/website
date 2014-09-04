@@ -2,9 +2,168 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>东方</title>
+<link rel="stylesheet" href="/assets/plugins/bootstrap/css/bootstrap.min.css" />
+<style type="text/css">
+body{background-color: black;}
+.container{text-align: center; position: relative;}
+#score{
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    font-size: 20px;
+    color: blueviolet;
+}
+</style>
 </head>
 <body>
-
+    <div class="container">
+        <span id="score">0</span>
+        <canvas id="canvas" height="800" width="600" style="background-color: white;"></canvas>
+    </div>
 </body>
+<script type="text/javascript" src="/assets/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/framework/core/base.js"></script>
+<script type="text/javascript" src="/framework/core/event.js"></script>
+<script type="text/javascript" src="/framework/core/Stage.js"></script>
+<script type="text/javascript" src="/framework/core/Game.js"></script>
+<script type="text/javascript" src="/framework/component/Sprite.js"></script>
+<script type="text/javascript" src="/framework/component/Gif.js"></script>
+<script>
+var canvas = document.getElementById('canvas');
+var context = canvas.getContext('2d');
+var score, stage, game;
+var img = new Image();
+window.onload = init;
+var d = 0.05;
+var reimu = new JM.Gif({
+    image: img,
+    frameSize: [32, 48],
+    frames: [[0, 0, d], [32, 0, d], [64, 0, d], [96, 0, d], [128, 0, d], [160, 0, d], [192, 0, d], [224, 0, d]],
+    width: 64,
+    height: 80,
+    x: 40,
+    y: 30,
+    fire_interval: 0.5,
+    speed: [150, 150], 
+    keydown :  function(e){
+        if(e.keyCode == JM.Event.KEY.W || e.keyCode == JM.Event.KEY.UP){
+            this.up = true;
+        }
+        if(e.keyCode == JM.Event.KEY.S || e.keyCode == JM.Event.KEY.DOWN){
+            this.down = true;
+        }
+        if(e.keyCode == JM.Event.KEY.A || e.keyCode == JM.Event.KEY.LEFT){
+            this.left = true;
+        }
+        if(e.keyCode == JM.Event.KEY.D || e.keyCode == JM.Event.KEY.RIGHT){
+            this.right = true;
+        }
+        if(e.keyCode == JM.Event.KEY.K || e.keyCode == JM.Event.KEY.SHIFT){
+           this.slow = true;
+        }
+        if(e.keyCode == JM.Event.KEY.J || e.keyCode == JM.Event.KEY.Z){
+            this.fire = true;
+        }
+    },
+    keyup: function(e){
+        if(e.keyCode == JM.Event.KEY.W || e.keyCode == JM.Event.KEY.UP){
+            this.up = false;
+        } 
+        if(e.keyCode == JM.Event.KEY.S || e.keyCode == JM.Event.KEY.DOWN){
+            this.down = false;
+        }
+        if(e.keyCode == JM.Event.KEY.A || e.keyCode == JM.Event.KEY.LEFT){
+            this.left = false;
+        }
+        if(e.keyCode == JM.Event.KEY.D || e.keyCode == JM.Event.KEY.RIGHT){
+            this.right = false;
+        }
+        if(e.keyCode == JM.Event.KEY.K || e.keyCode == JM.Event.KEY.SHIFT){
+            this.slow = false;
+        }
+        if(e.keyCode == JM.Event.KEY.J || e.keyCode == JM.Event.KEY.Z){
+            this.fire = false;
+        }
+    },
+    update: function(timer){
+        this.sy = this.sx = 0;
+        this.frames = [[0, 0, d], [32, 0, d], [64, 0, d], [96, 0, d], [128, 0, d], [160, 0, d], [192, 0, d], [224, 0, d]];
+        this.loop_index = 0;
+        if(this.up){
+            this.sy = -this.speed[1];
+        }
+        if(this.down){
+            this.sy = this.speed[1];
+        }
+        if(this.right){
+            this.sx = this.speed[0];
+            this.frames = [[0, 96, d], [32, 96, d], [64, 96, d], [96, 96, d], [128, 96, d], [160, 96, d], [192, 96, d], [224, 96, d]];
+            this.loop_index = 5;
+        }
+        if(this.left){
+            this.sx = -this.speed[0];
+            this.frames = [[1, 48, d], [33, 48, d], [65, 48, d], [97, 48, d], [129, 48, d], [161, 48, d], [193, 48, d], [225, 48, d]];
+            this.loop_index = 5;
+        }
+        if(this.slow){
+            this.sy /= 5;
+            this.sx /= 5;
+        }
+        if(this.fire && this.fire_interval > 0.5){
+            var me = this;
+            var b = new JM.Sprite({
+                y: me.y,
+                x: me.x + me.width/2,
+                sy: -300,               
+                render: function(context){                
+                    context.save();
+                    context.translate(this.x, this.y);
+                    context.rotate(270*Math.PI/180);
+                    context.drawImage(me.image, 0, 178, 64, 12, 0, 0, 64, 12);
+                    context.drawImage(me.image, 0, 178, 64, 12, 0, -12, 64, 12);
+                    context.restore();
+                }
+            });
+            stage.addSprite(b);
+            this.fire_interval = 0;
+        }else if(this.fire){
+            this.fire_interval += timer.step;
+        }
+        
+    }
+});
+
+function init(){
+    stage = new JM.Stage({
+        context: context,
+        width: 600,
+        height: 800,
+    });
+
+    JM.Event.delegate('keydown', [reimu, 'keydown'], document);
+    JM.Event.delegate('keyup', [reimu, 'keyup'], document);
+
+    stage.addSprite(reimu);
+
+    game = new JM.Game({
+        stage: stage,
+    });
+    img.src = '/assets/th11/player/pl00/pl00.png';
+    if(img.complete){
+        ss();
+    }else{
+        img.onload = function(){
+            ss();
+            img.onload = null;
+        };
+    };
+}
+
+function ss(e){
+    document.removeEventListener('keydown', ss);
+    game.start(); 
+}
+</script>
 </html>
