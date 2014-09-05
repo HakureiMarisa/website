@@ -35,18 +35,37 @@ var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var score, stage, game;
 var img = new Image();
+var enemy = new Image();
 window.onload = init;
 var d = 0.05;
-var reimu = new JM.Gif({
+
+function Hero(opts){
+    Hero.superclass.constructor.call(this, opts);
+}
+JM.inherit(Hero, JM.Gif);
+
+Hero.prototype.render = function(context){
+    Hero.superclass.render.call(this, context);
+    if(this.slow){
+        context.fillStyle="#FF0000";
+        context.beginPath();
+        context.arc(this.x+this.width/2, this.y+this.height/2, 5, 0, Math.PI*2, true);
+        context.closePath();
+        context.fill();
+    }
+}
+
+
+var reimu = new Hero({
     image: img,
     frameSize: [32, 48],
     frames: [[0, 0, d], [32, 0, d], [64, 0, d], [96, 0, d], [128, 0, d], [160, 0, d], [192, 0, d], [224, 0, d]],
     width: 64,
     height: 80,
-    x: 40,
-    y: 30,
+    x: 300,
+    y: 700,
     fire_interval: 0.5,
-    speed: [150, 150], 
+    speed: [300, 300], 
     keydown :  function(e){
         if(e.keyCode == JM.Event.KEY.W || e.keyCode == JM.Event.KEY.UP){
             this.up = true;
@@ -111,26 +130,48 @@ var reimu = new JM.Gif({
             this.sy /= 5;
             this.sx /= 5;
         }
-        if(this.fire && this.fire_interval > 0.5){
+        if(this.fire && this.fire_interval > 0.05){
             var me = this;
             var b = new JM.Sprite({
                 y: me.y,
                 x: me.x + me.width/2,
-                sy: -300,               
+                sy: -1200,               
                 render: function(context){                
                     context.save();
                     context.translate(this.x, this.y);
                     context.rotate(270*Math.PI/180);
                     context.drawImage(me.image, 0, 178, 64, 12, 0, 0, 64, 12);
                     context.drawImage(me.image, 0, 178, 64, 12, 0, -12, 64, 12);
+                    //context.fillRect(0, -12, 64, 12);
                     context.restore();
+                },
+                update: function(timer){
+                    var buttle = {type: 1, x:this.x-12, y:this.y-64, width:24, height:64};
+                    var enem = {type: 1, x:jue.x, y:jue.y-15, width:jue.width, height:jue.height-30};
+
+                    if(JM.testCollision(buttle, enem)){
+                        stage.removeSprite(this._id); 
+                    }
                 }
             });
             stage.addSprite(b);
             this.fire_interval = 0;
-        }else if(this.fire){
-            this.fire_interval += timer.step;
         }
+        this.fire_interval += timer.step;
+    }
+});
+d = 0.15;
+var jue = new JM.Gif({
+    image: enemy,
+    frameSize: [30, 64],
+    frames: [[10, 0, d], [57, 0, d], [104, 0, d], [153, 0, d]],
+    width: 60,
+    height: 95,
+    x: 300,
+    y: 100,
+    fire_interval: 0.5,
+    speed: [300, 300],
+    update: function(timer){
         
     }
 });
@@ -146,11 +187,13 @@ function init(){
     JM.Event.delegate('keyup', [reimu, 'keyup'], document);
 
     stage.addSprite(reimu);
+    stage.addSprite(jue);
 
     game = new JM.Game({
         stage: stage,
     });
     img.src = '/assets/th11/player/pl00/pl00.png';
+    enemy.src = '/assets/th11/stgenm/stg4enm.png';
     if(img.complete){
         ss();
     }else{
@@ -162,8 +205,19 @@ function init(){
 }
 
 function ss(e){
-    document.removeEventListener('keydown', ss);
-    game.start(); 
+    if(enemy.complete){
+        game.start();
+    }else{
+        enemy.onload = function(){
+            game.start();
+            enemy.onload = null;
+        };
+    };
+    
 }
+
+var a = {type:1, x: 0, y: 0, width: 10, height: 10};
+var b = {type:1, x: 5, y: 10, width: 10, height: 10};
+console.log(JM.testCollision(a, b));
 </script>
 </html>

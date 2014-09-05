@@ -47,6 +47,18 @@
     }
     
     Stage.prototype.addSprite = function(sprite){
+        if(!sprite._id){
+            sprite._id = Date.now();
+        }
         this.sprites.push(sprite);
+    }
+    
+    Stage.prototype.removeSprite = function(id){
+        for(var i in this.sprites){
+            if(this.sprites[i]._id == id){
+                this.sprites.splice(i, 1); 
+                break;
+            }     
+        }
     }
 })();

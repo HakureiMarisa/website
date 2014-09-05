@@ -107,6 +107,25 @@
     	return false;
     };
 
+    
+    JM.testCollision = function(obj1, obj2){
+        switch(obj1.type + obj2.type) {
+            case 2:
+                return obj1.x <= obj2.x + obj2.width && obj2.x <= obj1.x + obj1.width && 
+                obj1.y <= obj2.y + obj2.height && obj2.y <= obj1.y + obj1.height;
+                break;
+            case 3:
+                return obj1.x <= obj2.x + obj2.width && obj2.x <= obj1.x + obj1.width && 
+                obj1.y <= obj2.y + obj2.height && obj2.y <= obj1.y + obj1.height;
+                break;
+            case 4:
+                return Math.sqrt(Math.pow(obj1.x - obj2.x)+ Math.pow(obj1.x - obj2.x)) > obj1.r + obj2.r;
+                break;
+            default:
+                break;
+        }      
+    };
+    
     function doSATCheck(poly1, poly2, result){
     	var len1 = poly1.length, len2 = poly2.length, currentPoint, nextPoint, distance, min1, max1, min2, max2, dot, overlap, normal = {x:0, y:0};
     	
