@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>扑腾鸟</title>
-<link rel="stylesheet" href="/assets/plugins/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="../../assets/plugins/bootstrap/css/bootstrap.min.css" />
 <style type="text/css">
 body{background-color: black;}
 .container{text-align: center; position: relative;}
@@ -23,14 +23,14 @@ body{background-color: black;}
         <span id="img_text">加载</span>
     </div>
 </body>
-<script type="text/javascript" src="/assets/js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/framework/core/base.js"></script>
-<script type="text/javascript" src="/framework/core/event.js"></script>
-<script type="text/javascript" src="/framework/core/Stage.js"></script>
-<script type="text/javascript" src="/framework/core/Game.js"></script>
-<script type="text/javascript" src="/framework/component/Sprite.js"></script>
-<script type="text/javascript" src="/framework/component/Gif.js"></script>
+<script type="text/javascript" src="../../assets/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../framework/core/base.js"></script>
+<script type="text/javascript" src="../../framework/core/event.js"></script>
+<script type="text/javascript" src="../../framework/core/Stage.js"></script>
+<script type="text/javascript" src="../../framework/core/Game.js"></script>
+<script type="text/javascript" src="../../framework/component/Sprite.js"></script>
+<script type="text/javascript" src="../../framework/component/Gif.js"></script>
 <script type="text/javascript">
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
@@ -132,7 +132,7 @@ function init(){
 	    stage: stage,
 	});
 	
-	img.src = '/study/best/example/flappy/images/flappy_packer.png';
+	img.src = '../../study/best/example/flappy/images/flappy_packer.png';
     if(img.complete){
         document.addEventListener('keydown', ss, false);
     }else{
