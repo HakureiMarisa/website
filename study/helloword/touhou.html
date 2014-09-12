@@ -14,10 +14,33 @@ body{background-color: black;}
     font-size: 20px;
     color: blueviolet;
 }
+.notice{
+    position: absolute;
+    color: white;
+}
+.key{
+    width: 23px;
+    height: 28px;
+    line-height: 22px;
+    display: inline-block;
+    font-weight: bold;
+    text-align: center;
+    font: bold 9px/18px Verdana,"宋体",Arial,Helvetica,sans-serif;
+    color: #363636;
+    background: url(../../assets/img/icon_keys.gif) 0 -554px no-repeat;
+}
 </style>
 </head>
 <body>
     <div class="container">
+        <div class="notice">
+        <div class="n_row">上：<span class="key">W</span>或<span class="key">↑</span></div>
+        <div class="n_row">下：<span class="key">S</span>或<span class="key">↓</span></div>
+        <div class="n_row">左：<span class="key">A</span>或<span class="key">←</span></div>
+        <div class="n_row">右：<span class="key">D</span>或<span class="key">→</span></div>
+        <div class="n_row">发弹：<span class="key">J</span>或<span class="key">Z</span></div>
+        <div class="n_row">慢速：<span class="key">K</span>或<span class="key">shift</span></div>
+        </div>
         <span id="score">0</span>
         <canvas id="canvas" height="800" width="600" style="background-color: white;"></canvas>
     </div>
