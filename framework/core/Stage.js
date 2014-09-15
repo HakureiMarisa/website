@@ -28,12 +28,13 @@
         var last = this.timer.last = this.timer.now
         this.timer.now = now;
         this.timer.step = (now - last)/1000;
-        this._update(); 
+        this._update();
         this._render();
-              
+        this._disappear();
     }
 
     Stage.prototype._update = function(){
+        //更新每个精灵的状态
         for(var i in this.sprites){
             this.sprites[i]._update(this.timer);
         }
@@ -44,6 +45,13 @@
         for(var i in this.sprites){
             this.sprites[i].render(this.context);
         }       
+    }
+    
+    Stage.prototype._disappear = function(){
+        //判断每个精灵的状态，用以决定此精灵是否还有必要存在
+        for(var i in this.sprites){
+            this.sprites[i]._testCollision(this.timer, this.context);
+        }      
     }
     
     Stage.prototype.addSprite = function(sprite){

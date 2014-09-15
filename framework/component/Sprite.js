@@ -20,6 +20,12 @@
     	
     }
 
+    Sprite.prototype._testCollision = function(timer, context) {
+        if((this.x > context.width) || (this.x < 0) || (this.y < 0) || (this.y > context.height)){           
+            stage.removeSprite(this._id); 
+        }
+    }
+    
     /**
      * 更新精灵状态
      */
