@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>东方</title>
-<link rel="stylesheet" href="/assets/plugins/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="../../assets/plugins/bootstrap/css/bootstrap.min.css" />
 <style type="text/css">
 body{background-color: black;}
 .container{text-align: center; position: relative;}
@@ -14,22 +14,45 @@ body{background-color: black;}
     font-size: 20px;
     color: blueviolet;
 }
+.notice{
+    position: absolute;
+    color: white;
+}
+.key{
+    width: 23px;
+    height: 28px;
+    line-height: 22px;
+    display: inline-block;
+    font-weight: bold;
+    text-align: center;
+    font: bold 9px/18px Verdana,"宋体",Arial,Helvetica,sans-serif;
+    color: #363636;
+    background: url(../../assets/img/icon_keys.gif) 0 -554px no-repeat;
+}
 </style>
 </head>
 <body>
     <div class="container">
+        <div class="notice">
+        <div class="n_row">上：<span class="key">W</span>或<span class="key">↑</span></div>
+        <div class="n_row">下：<span class="key">S</span>或<span class="key">↓</span></div>
+        <div class="n_row">左：<span class="key">A</span>或<span class="key">←</span></div>
+        <div class="n_row">右：<span class="key">D</span>或<span class="key">→</span></div>
+        <div class="n_row">发弹：<span class="key">J</span>或<span class="key">Z</span></div>
+        <div class="n_row">慢速：<span class="key">K</span>或<span class="key">shift</span></div>
+        </div>
         <span id="score">0</span>
         <canvas id="canvas" height="800" width="600" style="background-color: white;"></canvas>
     </div>
 </body>
-<script type="text/javascript" src="/assets/js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="/framework/core/base.js"></script>
-<script type="text/javascript" src="/framework/core/event.js"></script>
-<script type="text/javascript" src="/framework/core/Stage.js"></script>
-<script type="text/javascript" src="/framework/core/Game.js"></script>
-<script type="text/javascript" src="/framework/component/Sprite.js"></script>
-<script type="text/javascript" src="/framework/component/Gif.js"></script>
+<script type="text/javascript" src="../../assets/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../framework/core/base.js"></script>
+<script type="text/javascript" src="../../framework/core/event.js"></script>
+<script type="text/javascript" src="../../framework/core/Stage.js"></script>
+<script type="text/javascript" src="../../framework/core/Game.js"></script>
+<script type="text/javascript" src="../../framework/component/Sprite.js"></script>
+<script type="text/javascript" src="../../framework/component/Gif.js"></script>
 <script>
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
@@ -255,8 +278,8 @@ function init(){
     game = new JM.Game({
         stage: stage,
     });
-    img.src = '/assets/th11/player/pl00/pl00.png';
-    enemy.src = '/assets/th11/stgenm/stg4enm.png';
+    img.src = '../../assets/th11/player/pl00/pl00.png';
+    enemy.src = '../../assets/th11/stgenm/stg4enm.png';
     if(img.complete){
         ss();
     }else{
