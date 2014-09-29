@@ -56,7 +56,7 @@
     
     Stage.prototype.addSprite = function(sprite){
         if(!sprite._id){
-            sprite._id = Date.now();
+            sprite._id = Math.random();
         }
         this.sprites.push(sprite);
     }

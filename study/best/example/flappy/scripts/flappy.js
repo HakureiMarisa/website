@@ -5,7 +5,7 @@ void function(exports) {
    * @version 2014年05月26日
    */
 
-  var DEBUG = false;
+  var DEBUG = true;
 
   var groundInfo = {
     height: 281

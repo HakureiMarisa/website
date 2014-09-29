@@ -115,15 +115,37 @@
                 obj1.y <= obj2.y + obj2.height && obj2.y <= obj1.y + obj1.height;
                 break;
             case 3:
-                return obj1.x <= obj2.x + obj2.width && obj2.x <= obj1.x + obj1.width && 
-                obj1.y <= obj2.y + obj2.height && obj2.y <= obj1.y + obj1.height;
+                var rect = obj1;
+                var circle = obj2;
+                if(obj1.type == 2){
+                    rect = obj2;
+                    circle = obj1;
+                }
+                var lu = {x: rect.x, y: rect.y};
+                var ld = {x: rect.x, y: rect.y + rect.height};
+                var ru = {x: rect.x + rect.width, y: rect.y};
+                var rd = {x: rect.x + rect.width, y: rect.y + rect.height};
+                if(this.calcDist(circle, lu) < circle.r 
+                        || this.calcDist(circle, ld) < circle.r 
+                        || this.calcDist(circle, ru) < circle.r
+                        || this.calcDist(circle, rd) < circle.r
+                ){
+                    return true;
+                }
+                return false;
                 break;
             case 4:
-                return Math.sqrt(Math.pow(obj1.x - obj2.x)+ Math.pow(obj1.x - obj2.x)) > obj1.r + obj2.r;
+                return Math.sqrt(Math.pow(obj1.x - obj2.x, 2)+ Math.pow(obj1.x - obj2.x, 2)) > obj1.r + obj2.r;
                 break;
             default:
                 break;
         }      
+    };
+    /*
+     * 计算两点距离
+     */
+    JM.calcDist = function(point1, point2){       
+        return Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2));
     };
     
     function doSATCheck(poly1, poly2, result){
