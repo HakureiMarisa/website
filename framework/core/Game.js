@@ -24,8 +24,9 @@
     
     Game.prototype._run = function(){   
     	var me = this;
-    	this._interval = setInterval(function(){
-    		me.stage.step();
+    	me.stage.step();
+    	this._interval = setTimeout(function(){
+    		me._run();
 		}, 1000/this.FPS);
     };
 })();

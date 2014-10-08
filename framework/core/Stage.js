@@ -28,9 +28,9 @@
         var last = this.timer.last = this.timer.now
         this.timer.now = now;
         this.timer.step = (now - last)/1000;
-        this._update();
-        this._render();
+        this._update();        
         this._disappear();
+        this._render();
     }
 
     Stage.prototype._update = function(){
@@ -50,18 +50,19 @@
     Stage.prototype._disappear = function(){
         //判断每个精灵的状态，用以决定此精灵是否还有必要存在
         for(var i in this.sprites){
-            this.sprites[i]._testCollision(this.timer, this.context);
+            this.sprites[i]._testCollision(this);
         }      
     }
     
     Stage.prototype.addSprite = function(sprite){
         if(!sprite._id){
             sprite._id = Math.random();
-        }
+        }        
         this.sprites.push(sprite);
     }
     
-    Stage.prototype.removeSprite = function(id){
+    Stage.prototype.removeSprite = function(id){      
+        var s = this.sprites.length;
         for(var i in this.sprites){
             if(this.sprites[i]._id == id){
                 this.sprites.splice(i, 1); 

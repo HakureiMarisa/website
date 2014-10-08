@@ -247,6 +247,33 @@ function ss(){
                 return {type: 2, x: this.x + this.width / 2 - 2.5, y: this.y + this.height / 2 - 2.5, r: 5};
             }
         });
+        
+        //符卡：波与粒的境界
+        function SC_boyuli(opts){
+          SC_boyuli.superclass.constructor.call(this, opts);
+        }
+        JM.inherit(SC_boyuli, JM.Sprite);
+        
+        SC_boyuli.prototype.render = function(context){
+          var but = loader.getImg('bullet');
+          context.save();
+          context.translate(this.x, this.y);
+          //context.fillRect(-5, -5, 10, 10);  
+          context.rotate(-this.angle * Math.PI / 180);
+          context.drawImage(but, 32, 128, 30, 32, -15, -20, 30, 40);                     
+          context.restore();
+        }
+        
+        SC_boyuli.prototype._testCollision = function(stage){
+          SC_boyuli.superclass._testCollision.call(this, stage);
+          var buttle = {type: 1, x:this.x, y:this.y, width:10, height:10};
+          var enem = reimu.getCollision();
+        
+          if(JM.testCollision(buttle, enem)){
+              stage.removeSprite(this._id); 
+          } 
+        }
+        
         d = 0.15;
         var jue = new Boss({
             image: loader.getImg('enemy'),
@@ -295,39 +322,13 @@ function ss(){
                         //angle = 50;
                         var bx = 50 * Math.sin(angle * (2 * Math.PI / 360));
                         var by = 50 * Math.cos(angle * (2 * Math.PI / 360));
-                        var bdd = new JM.Sprite({
+                        var bdd = new SC_boyuli({
                             x: me.x + me.width/2 - bx,
                             y: me.y + me.height/2 - by,
                             sx: 300 * -Math.sin(angle * (2 * Math.PI / 360)),
                             sy: 300 * -Math.cos(angle * (2 * Math.PI / 360)),                           
-                            angle: angle,
-                            render: function(context){
-                                var but = loader.getImg('bullet');
-                                context.save();
-                                context.translate(this.x, this.y);
-                                context.fillStyle = '#00ff00';
-                                context.fillRect(-5, -5, 10, 10);
-                                
-                                context.rotate(-this.angle * Math.PI / 180);
-                                //var angle_ori = Math.tan();
-                                context.fillStyle = '#ff00ff';
-                                //context.fillRect(0, 0, 30, 40);
-                                context.drawImage(but, 32, 128, 30, 32, -15, -20, 30, 40);                     
-                                context.restore();
-                                //console.log(this.x, this.y, this.angle);
-                                //game.pause();
-                                //context.fillRect(this.x, this.y, 30, 40);
-                            },
-                            _testCollision: function(timer, context){
-                                var buttle = {type: 1, x:this.x, y:this.y, width:10, height:10};
-                                var enem = reimu.getCollision();
-
-                                if(JM.testCollision(buttle, enem)){
-                                    stage.removeSprite(this._id); 
-                                } 
-                                
-                            }
-                        });
+                            angle: angle
+                        });                        
                         stage.addSprite(bdd);
                     }
                     
