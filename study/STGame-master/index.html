@@ -1,0 +1,1541 @@
+<!doctype html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="stylesheet" href="index.css" type="text/css" />
+</head>
+<body>
+<div id="res" class="hidden">
+	<img id="title01s" src="res/title01s.png" />
+	<img id="player0L" src="res/player0.png" />
+	<canvas id="player0R" from="player0L 0 48 256 48"
+		transform="mirror:x"></canvas>
+	<canvas id="bullet0" from="player0L 128 0 16 16"
+		transform="rotate:{{range(180, 0, 10)}}"></canvas>
+	<canvas id="bullet1" from="player0L 144 0 16 16"
+		transform="rotate:{{range(90, 0, 15)}}"></canvas>
+	<canvas id="onmyou" from="player0L 128 16 16 16"
+		transform="rotate:{{range(360, 0, 20)}}"></canvas>
+	<img id="etama2" src="res/etama2.png" />
+	<img id="etama3" src="res/etama3.png" />
+	<canvas id="lasers" from="etama3 0 16 256 16"
+		transform="mirror:{{array(50)}}" stack="y"></canvas>
+	<img id="etama4" src="res/etama4.png" />
+	<img id="eff00" src="res/eff00.png" />
+	<canvas id="effboss" from="eff00 16 48 16 16"
+		transform="rotate:{{range(180, 0, 10)}}"></canvas>
+	<canvas id="effbullet" from="player0L 128 32 16 16"
+		transform="rotate:{{range(360, 0, 60)}}"></canvas>
+	<canvas id="pslow" from="etama2 0 112 64 64"
+		transform="rotate:{{range(90, 0, 6)}}"></canvas>
+	<img id="stg1enm" src="res/stg1enm.png" />
+	<img id="stg1enm2" src="res/stg1enm2.png" />
+	<canvas id="stg1enm2R" from="stg1enm2 0 48 96 48" transform="mirror:x"></canvas>
+	<img id="stg1bg" src="res/stg1bg.png" />
+	<img id="stg2enm" src="res/stg2enm.png" />
+	<canvas id="enm2a" from="stg2enm 128 96 32 32"
+		transform="rotate:{{range(360, 0, 60)}}"></canvas>
+	<img id="stg2enm2" src="res/stg2enm2.png" />
+	<canvas id="stg2enm2R" from="stg2enm2 32 0 48 64" transform="mirror:x"></canvas>
+	<img id="stg2bg" src="res/stg2bg.png" />
+	<img id="stg3enm" src="res/stg3enm.png" />
+	<img id="front" src="res/front.png" />
+	<canvas id="dotmeiling" from="stg3enm 144 208 48 48" transform="scale:1 0.5"></canvas>
+	<canvas id="effmeiling" from="dotmeiling" transform="rotate:{{range(180, 0, 30)}}"></canvas>
+	<canvas id="bombs" from="player0L 0 97 63 64"
+		transform="colormask:White,DeepPink,DodgerBlue,SpringGreen,Black"></canvas>
+	<!-- use these patterns as background -->
+	<canvas id="mainbg_patt" from="front 0 224 32 32" bg-css=".play"></canvas>
+	<canvas id="scbg1" from="front 80 224 16 16" bg-css=".scbg1"></canvas>
+	<canvas id="scbg2" from="front 96 224 16 16" bg-css=".scbg2"></canvas>
+	<canvas id="logo_patt" from="front 128 128 128 128" bg-css=".logo"></canvas>
+	<!-- stg1 bg -->
+	<canvas id="tree_pattL" from="stg1bg 0 48 64 128"
+		transform="mirror:0,y" stack="y"></canvas>
+	<canvas id="tree_pattR" from="tree_pattL"
+		transform="mirror:x"></canvas>
+	<script id="gen_treebg">
+		(function(RES) {
+			var cv = $e('stg1cv2'),
+				dc = getCanvasDC(cv);
+			cv.width = parseInt($style(cv, 'width'));
+			cv.height = parseInt($style(cv, 'height'));
+
+			ieach([RES.tree_pattL, RES.tree_pattR], function mkRepeatTexture(i, patt) {
+				var sw = patt.width,
+					h = patt.height / 2,
+					f = random(1),
+					x = i == 0 ? 10 : cv.width - patt.width - 10,
+					y = 0;
+				while (y < cv.height) {
+					var g = random(1);
+						sy = (g > f ? f : 2 - f) * h,
+						sh = Math.abs(g - f) * h;
+					dc.drawImage(patt, 0, sy, sw, sh, x, y, sw, sh);
+
+					f = g;
+					y += sh;
+				}
+			});
+
+			var rh = parseInt($style('.game', 'height'));
+			dc.repeatSelf(0, cv.height - rh, cv.width, rh, 0, 0);
+		})
+	</script>
+	<canvas id="ground_patt" from="stg1bg 0 0 64 32"></canvas>
+	<canvas id="ground_pattX" class="ground_patt" from="stg1bg 64 0 16 16"></canvas>
+	<canvas id="ground_patt0" class="ground_patt" from="stg1bg 64 0 16 16"></canvas>
+	<canvas id="ground_patt1" class="ground_patt" from="stg1bg 80 0 16 16"></canvas>
+	<canvas id="ground_patt2" class="ground_patt" from="stg1bg 96 0 32 16"></canvas>
+	<canvas id="ground_patt3" class="ground_patt" from="stg1bg 64 16 16 16"></canvas>
+	<canvas id="ground_patt4" class="ground_patt" from="stg1bg 80 16 28 16"></canvas>
+	<canvas id="ground_patt5" class="ground_patt" from="stg1bg 108 16 20 16"></canvas>
+	<canvas id="ground_tileB" from="stg1bg 128 0 64 18"></canvas>
+	<canvas id="ground_tileT" from="ground_tileB" transform="rotate:180"></canvas>
+	<canvas id="ground_brush0" from="stg1bg 208 48 48 16" transform="0,0"></canvas>
+	<canvas id="ground_brush1" from="ground_brush0" transform="offset:0 0,16 0" stack="y"></canvas>
+	<canvas id="ground_brush2" from="ground_brush1 0 0 48 32"></canvas>
+	<script id="gen_groundbg">
+		(function(RES) {
+			var cv = $e('stg1cv1'),
+				dc = getCanvasDC(cv),
+				patt = RES.ground_patt;
+			cv.width = parseInt($style(cv, 'width'));
+			cv.height = parseInt($style(cv, 'height'));
+			dc.fillWith(dc.createPattern(patt, 'repeat'));
+
+			for (var y = 0; y < cv.height; y += patt.height) {
+				var cx = random(0.3, 0.7) * cv.width,
+					cy = random(patt.height) + y;
+					sc = randin($('canvas.ground_patt'));
+				dc.drawImage(sc, cx, cy);
+			}
+
+			var sc = RES.ground_tileT,
+				brA = 'rgb(57, 49, 94)',
+				brB = dc.createPattern(RES.ground_brush2, 'repeat'),
+				py = 800, ph = 200;
+			for (var x = 0, y = py; x < cv.width; x += sc.width, y -= sc.height) {
+				dc.clearRect(x, y, sc.width, ph);
+				dc.fillStyle = brA;
+				dc.fillRect(x, y, sc.width, ph);
+				dc.fillStyle = brB;
+				dc.fillRect(x, y, sc.width, ph);
+				dc.drawImage(RES.ground_tileT, x, y);
+				dc.drawImage(RES.ground_tileB, x, y + ph - sc.height);
+			}
+
+			var bg = $e('stg1cv2'),
+				hw = bg.width / 2,
+				dw = bg.width * 0.1;
+			dc.globalAlpha = 0.4;
+			dc.drawImage(bg, 0, 0, hw, bg.height, dw, cv.height - bg.height, hw, bg.height);
+			dc.drawImage(bg, hw, 0, hw, bg.height, hw-dw, cv.height - bg.height, hw, bg.height);
+			dc.globalAlpha = 1;
+
+			var rh = parseInt($style('.game', 'height'));
+			dc.repeatSelf(0, cv.height - rh, cv.width, rh, 0, 0);
+		})
+	</script>
+	<!-- stg3 bg -->
+	<img id="stg3bg" src="res/stg3bg.png" />
+	<canvas id="stg3_gnd1" scale="2" from="stg3bg 48 0 34 34"></canvas>
+	<canvas id="stg3_gnd2" scale="2" from="stg3bg 96 0 34 34"></canvas>
+	<canvas id="stg3_gnd3" scale="2" from="stg3bg 144 0 34 34"></canvas>
+	<canvas id="stg3_gnd4" scale="2" from="stg3bg 0 0 34 34"></canvas>
+	<canvas id="stg3_gnd2_pad" from="stg3bg 128 48 48 16"></canvas>
+	<canvas id="stg3_gnd3_pad" from="stg3bg 64 48 48 16"></canvas>
+	<canvas id="stg3_gnd_ring" from="stg3bg 0 48 32 32"></canvas>
+	<canvas id="stg3_gnd_dot" from="stg3bg 32 48 32 32"></canvas>
+	<script id="gen_stg3bg">
+		(function(RES) {
+			var cv = $e('stg3cv'),
+				dc = getCanvasDC(cv);
+			cv.width = parseInt($style(cv, 'width'));
+			cv.height = parseInt($style(cv, 'height'));
+			var y = cv.height;
+			ieach([
+				[600, RES.stg3_gnd1],
+				[400, RES.stg3_gnd2, RES.stg3_gnd2_pad],
+				[400, RES.stg3_gnd3, RES.stg3_gnd3_pad],
+			], function (i, v) {
+				var h = v[0],
+					r = v[1],
+					p = v[2];
+				dc.fillStyle = dc.createPattern(r, 'repeat');
+				dc.fillRect(0, y -= h, cv.width, h);
+				if (p) {
+					dc.fillStyle = dc.createPattern(p, 'repeat');
+					range(cv.width + p.width, 0, p.width, function(x) {
+						dc.drawImage(p, x, y+h-p.height/2);
+					})
+				}
+			})
+			dc.fillStyle = dc.createPattern(RES.stg3_gnd4, 'repeat');
+			dc.fillRect(0, 0, cv.width, y);
+
+			cv.towers = [];
+			range(y, 0, 128, function(y) {
+				var c = cv.width/2,
+					f = RES.stg3_gnd_ring,
+					w = f.width/2,
+					h = f.height/2;
+				dc.drawImage(f, c-w-96, y-h);
+				dc.drawImage(f, c-w+96, y-h);
+				array(6, function(i) {
+					cv.towers.push({ px:c-96, py:y, pz:10+i*20, r:24-i*3 });
+					cv.towers.push({ px:c+96, py:y, pz:10+i*20, r:24-i*3 });
+				})
+			})
+		})
+	</script>
+	<!-- stg4 bg -->
+	<img id="stg4bg" src="res/stg4bg.png" />
+	<canvas id="stg4_block_front0" from="stg4bg 16 64 240 160" transform=";"></canvas>
+	<canvas id="stg4_block_front1" from="stg4_block_front0 190 0 240 160" bg-css=".block .face-b"></canvas>
+	<canvas id="stg4_block_side" from="stg4bg 16 16 64 32" bg-css=".block .face-f, .block .face-l, .block .face-r"></canvas>
+	<script id="gen_stg4bg">
+	(function(RES) {
+		function newBlock(x, y, cx, cy, cz) {
+			var e = $new('div', {
+				className: 'block',
+			});
+			keach({
+				position: 'relative',
+				left: x+'px',
+				top: y+'px',
+				'transform-style': 'preserve-3d',
+			}, function(k, v) {
+				$style(e, k, v);
+			})
+			e.appendChild(newFace('f', cx, cy, cz));
+			e.appendChild(newFace('b', cx, cy, cz));
+			e.appendChild(newFace('l', cx, cy, cz));
+			e.appendChild(newFace('r', cx, cy, cz));
+			return e;
+		}
+		function newFace(d, cx, cy, cz) {
+			var i = 'fstblr'.indexOf(d),
+				w = [cx, cx, cx, cx, cz, cz][i],
+				h = [cy, cy, cz, cz, cy, cy][i],
+				t = [cz, cz, cy, cy, cx, cx][i];
+			var e = $new('div', {
+				className: 'face-'+d,
+			});
+			keach({
+				position: 'absolute',
+				width: w+'px',
+				height: h+'px',
+				left: (-w/2)+'px',
+				top: (-h/2)+'px',
+				transform: {
+					f: '',
+					s: 'rotateX(180deg) ',
+					t: 'rotateX( 90deg) ',
+					b: 'rotateX(-90deg) ',
+					l: 'rotateY( 90deg) ',
+					r: 'rotateY(-90deg) ',
+				}[d] + 'translateZ('+(t/2)+'px)',
+			}, function(k, v) {
+				$style(e, k, v);
+			})
+			return e;
+		}
+		var bg = $i('#stg4gnd');
+		$style(bg.parentNode, 'perspective', '1000px');
+		$style(bg, 'transform-style', 'preserve-3d');
+		$style(bg, 'transform-origin', 'center top');
+
+		var th = parseInt($style(bg, 'height')),
+			rh = parseInt($attr(bg, 'bg-repeat')),
+			ps = [];
+		range(th - rh, 0, 300, function(y) {
+			var x = random(400);
+			bg.appendChild(newBlock(x, y, 242, 50, 160));
+			if (y < rh) ps.push({ x:x, y:th-rh+y });
+		})
+		ieach(ps, function(i, v) {
+			bg.appendChild(newBlock(v.x, v.y, 242, 50, 160));
+		})
+	})
+	</script>
+	<img id="stg4enm" src="res/stg4enm.png" />
+	<canvas id="stg4enmR" from="stg4enm 96 202 144 54" transform="mirror:x"></canvas>
+	<script id="stg4frs">
+	(function(RES) {
+		return {
+			Circle: newFrame('stg4enm', 0, 96, 64, 64),
+			EnemySq: newFrame('stg4enm', 160, 96, 32, 32),
+			EnemySr: newFrame('stg4enm', 192, 96, 32, 32),
+		}
+	})
+	</script>
+	<!-- stg5 -->
+	<img id="stg5enm2" src="res/stg5enm2.png" />
+	<canvas id="stg5enmR" from="stg5enm2 128 0 108 64" transform="mirror:x"></canvas>
+	<img id="stg5bg" src="res/stg5bg.png" />
+	<canvas id="stg5gnd_patt" from="stg5bg 16 16 64 32"></canvas>
+	<canvas id="stg5gnd_wnd" from="stg5bg 92 0 72 64" scale="1.5"></canvas>
+	<canvas id="stg5gnd_wall" from="stg5bg 162 0 64 64" transform="rotate:90" scale="1.5"></canvas>
+	<script id="gen_stg5bg">
+	(function(RES) {
+		var bg = $i('#stg5gnd');
+		$style(bg.parentNode, 'perspective', '500px');
+		$style(bg, 'transform-style', 'preserve-3d');
+		$style(bg, 'transform-origin', 'center top');
+		var w = parseInt($style(bg, 'width')),
+			h = parseInt($style(bg, 'height'));
+		ieach($('canvas.bg-stg5'), function(i, e) {
+			var p = RES.stg5gnd_wall,
+				dc = e.getContext('2d');
+			$style(e, 'width', (e.width = w)+'px');
+			$style(e, 'height', (e.height = h)+'px');
+
+			if (i == 0) {
+				var dc = getCanvasDC(e);
+				dc.fillWith(dc.createPattern(RES.stg5gnd_patt, 'repeat'))
+
+				var j = 0,
+					blend = dc.globalCompositeOperation;
+				dc.globalAlpha = 0.8;
+				dc.globalCompositeOperation = 'lighter';
+				range(e.height, 0, RES.stg5gnd_wnd.height, function(y) {
+					if (j ++ % 3) dc.drawImage(RES.stg5gnd_wnd, 210, y);
+				})
+				dc.globalAlpha = 1;
+				dc.globalCompositeOperation = blend;
+
+				var rh = parseInt($style('.game', 'height'));
+				dc.repeatSelf(0, e.height - rh, e.width, rh, 0, 0);
+			}
+
+			$style(e, 'transform', 'translateZ('+(i*25)+'px)');
+			ieach([0, w-p.width], function(i, x) {
+				range(h+p.height, 0, p.height, function(y) {
+					dc.drawImage(p, x, y);
+				})
+			})
+		})
+	})
+	</script>
+	<!-- stg6 -->
+	<img id="stg6enm2" src="res/stg6enm2.png" />
+	<canvas id="stg6enmR" from="stg6enm2 64 0 128 80" transform="mirror:x"></canvas>
+	<img id="stg6bg" src="res/stg6bg.png" />
+	<canvas id="stg6bg_wall" from="stg6bg 0 0 256 128" transform="mirror:0,x" stack="y" scale="1.5"></canvas>
+	<canvas id="stg6bg_wall2" from="stg6bg 0 0 128 128" scale="2"></canvas>
+	<canvas id="stg6bg_moon" from="stg6bg 0 128 128 128" scale="2"></canvas>
+	<script id="gen_stg6bg">
+	(function(RES) {
+		function newWall(w, h, s) {
+			var e = $new('canvas', {
+				style: 'position:absolute;width:'+w+'px;height:'+h+'px;',
+				width: w+'px',
+				height: h+'px',
+			});
+			keach(s, function(k, v) {
+				$style(e, k, v)
+			})
+			var dc = getCanvasDC(e);
+			dc.fillWith(dc.createPattern(RES.stg6bg_wall, 'repeat'));
+			return e;
+		}
+		function cloneCanvas(cv) {
+			var e = $new('canvas', {
+				style: 'width:'+$style(cv, 'width')+';height:'+$style(cv, 'height')+';',
+				width: cv.width,
+				height: cv.height,
+			})
+			var dc = getCanvasDC(e);
+			dc.drawImage(cv, 0, 0);
+			return e;
+		}
+
+		var bg = $i('#stg6gnd');
+		$style(bg.parentNode, 'perspective', '500px');
+		$style(bg, 'transform-style', 'preserve-3d');
+		$style(bg, 'transform-origin', 'center top');
+
+		var w = parseInt($style(bg, 'width')),
+			h = parseInt($style(bg, 'height'));
+		var top = $new('div', {
+			style: 'width:'+w+'px;margin:64px',
+		});
+		top.appendChild(cloneCanvas(RES.stg6bg_moon ));
+		top.appendChild(cloneCanvas(RES.stg6bg_wall2));
+		top.appendChild(cloneCanvas(RES.stg6bg_wall2));
+		top.appendChild(cloneCanvas(RES.stg6bg_wall2));
+		bg.appendChild(top)
+		bg.appendChild(newWall(w, h, {}));
+		bg.appendChild(newWall(w, h, {
+			'transform': 'translateX(-'+w+'px) rotateY(-30deg)',
+			'transform-origin': '100% center',
+		}));
+		bg.appendChild(newWall(w, h, {
+			'transform': 'translateX('+w+'px) rotateY(30deg)',
+			'transform-origin': '0 center',
+		}));
+	})
+	</script>
+	<!-- font images -->
+	<img id="ascii" src="res/ascii.png" />
+	<canvas id="ascii_yellow" from="ascii"
+		transform="colormap:l->rgb(255,255,64)"></canvas>
+	<canvas id="ascii_cyan" from="ascii"
+		transform="colormap:l->rgb(192,240,240)" bg-css=".char-cyan .char"></canvas>
+	<canvas id="powerup" from="ascii 80 0 50 8"
+		transform="colormap:l->rgb(96,136,188)"></canvas>
+	<!-- number fonts -->
+	<canvas id="num" from="ascii 0 48 256 16"></canvas>
+	<canvas id="num0" from="num"
+		transform="colormap:l->rgb(123,192,249)"></canvas>
+	<canvas id="num1" from="num"
+		transform="colormap:l->rgb(155,120,240)"></canvas>
+	<canvas id="num2" from="num"
+		transform="colormap:l->rgb(224,128,192)"></canvas>
+	<canvas id="num3" from="num"
+		transform="colormap:l->rgb(255,64,64)"></canvas>
+	<!-- creating background css with toDataUrl -->
+	<script id="gen_bgcss">
+		(function(RES) {
+			/*
+			 * canvas.toDataURL() will not work in chrome when the html file is opened in a local disk
+			 * see http://stackoverflow.com/questions/10187306/canvas-todataurl-throws-security-exception-despite-image-being-local
+			 */
+			ieach($('canvas[bg-css]'), function(i, cv, ss) {
+				var s = $attr(cv, 'bg-css'),
+					r = 'background-image: url(' + cv.toDataURL() + ')';
+				$addCssRule(s, r);
+			});
+		})
+	</script>
+	<!-- fill some canvas -->
+	<script id="gen_fill">
+		(function(RES) {
+			ieach($('canvas[fill-with]'), function(i, cv) {
+				var dc = getCanvasDC(cv),
+					patt = RES[$attr(cv, 'fill-with')];
+				if (patt) {
+					cv.width = parseInt($style(cv, 'width'));
+					cv.height = parseInt($style(cv, 'height'));
+					dc.fillWith(dc.createPattern(patt, 'repeat'));
+				}
+			})
+		})
+	</script>
+	<!-- predefined frames -->
+	<script id="frames">
+		(function(RES) {
+			var _t = {};
+
+			_t.Player0 = array(4, function(i) {
+				return extend({ res:'player0L', sy: 0, sw:32, sh:48, w:32, h:48 }, { sx:32*i });
+			});
+			lastOfArray(_t.Player0).next = 0;
+			_t.PlayerL = array(7, function(i) {
+				return extend({ res:'player0L', sy:48, sw:32, sh:48, w:32, h:48 }, { sx:32*i });
+			});
+			lastOfArray(_t.PlayerL).next = 4;
+			_t.PlayerR = array(7, function(i) {
+				return extend({ res:'player0R', sy:0, sw:32, sh:48, w:32, h:48 }, { sx:255-32*(i+1) });
+			});
+			lastOfArray(_t.PlayerR).next = 4;
+
+			ieach([_t.PlayerL, _t.PlayerR], function(i, ls, ls0) {
+				ls.reset_index = ls0.length;
+				ieach(range(3).reverse(), function(x, i) {
+					ls0.push(extend({}, ls[i]));
+				});
+				lastOfArray(ls0).next = 0;
+			}, _t.Player0);
+
+			_t.Bullet0 = array(RES.bullet0.width/16, function(i) {
+				return extend({ res:'bullet0', sy:0, sw:16, sh:16, w:16, h:16 }, { sx:16*i });
+			});
+			_t.Bullet1 = array(RES.bullet1.width/16, function(i) {
+				return extend({ res:'bullet1', sy:0, sw:16, sh:16, w:16, h:16 }, { sx:16*i });
+			});
+			_t.BulletD = [
+				{ res:'player0L', sx:160, sy: 0, sw:16, sh:16, w:16, h:16 },
+				{ res:'player0L', sx:176, sy: 0, sw:16, sh:16, w:16, h:16 },
+			];
+			_t.Onmyou = array(RES.onmyou.width/16, function(i) {
+				return extend({ res:'onmyou', sy:0, sw:16, sh:16, w:16, h:16 }, { sx:16*i });
+			});
+			_t.OnmyouR = array(RES.onmyou.width/16, function(i) {
+				return extend({ res:'onmyou', sy:0, sw:16, sh:16, w:16, h:16 }, { sx:RES.onmyou.width-16-16*i });
+			});
+			_t.PSlow = array(RES.pslow.width/64, function(i) {
+				return extend({ res:'pslow', sy:0, sw:64, sh:64, w:64, h:64 }, { sx:64*i });
+			});
+			_t.Shield = array(RES.bombs.width/63, function(i) {
+				return extend({ res:'bombs', sy:0, sw:60, sh:60, w:120, h:120 }, { sx:63*i });
+			});
+
+			ieach(['Drops', 'Lasers', 'TamaA', 'TamaB', 'LongA', 'LongB', 'LongC'], function(i, k) {
+				_t[k] = array(16, function(j) {
+					return { res:'etama3', sx:16*j, sy:i*16, sw:16, sh:16, w:16, h:16,
+						rotate:k.indexOf('Long')==0 ? 'speed' : 0, rotate_list:360, }
+				});
+			});
+			_t.TamaSmall = array(5, function(i) {
+				return { res:'etama3', sx:16*(i+4), sy:112, sw:16, sh:16, w:16, h:16 }
+			})
+			_t.TamaDead = array(5, function(i) {
+				return { res:'etama3', sx:16*(i+9), sy:112, sw:16, sh:16, w:16, h:16 }
+			})
+			_t.TamaLarge = array(8, function(i) {
+				return { res:'etama3', sx:32*i, sy:128, sw:32, sh:32, w:32, h:32 }
+			});
+			_t.Knife = array(8, function(i) {
+				return { res:'etama3', sx:32*i, sy:160, sw:32, sh:32, w:32, h:32, rotate:true }
+			});
+			_t.TamaMini = arrcat(
+				array(8, function(i) {
+					return { res:'etama3', sx:8*i+128, sy:208, sw:8, sh:8, w:8, h:8 }
+				}), array(8, function(i) {
+					return { res:'etama3', sx:8*i+128, sy:208+8, sw:8, sh:8, w:8, h:8 }
+				})
+			);
+			_t.TamaMedium = array(8, function(i) {
+				return { res:'etama3', sx:32*i, sy:257-32, sw:32, sh:32, w:32, h:32 }
+			});
+			_t.TamaColorNew = {
+				k: _t.TamaMedium[0],
+				r: _t.TamaMedium[1],
+				m: _t.TamaMedium[2],
+				b: _t.TamaMedium[3],
+				c: _t.TamaMedium[4],
+				g: _t.TamaMedium[5],
+				y: _t.TamaMedium[6],
+				o: _t.TamaMedium[6],
+				w: _t.TamaMedium[7],
+			};
+			_t.TamaColorDead = {
+				k: _t.TamaDead[0],
+				r: _t.TamaDead[1],
+				m: _t.TamaDead[1],
+				b: _t.TamaDead[2],
+				c: _t.TamaDead[2],
+				g: _t.TamaDead[3],
+				y: _t.TamaDead[4],
+				o: _t.TamaDead[4],
+				w: _t.TamaDead[0],
+			}
+			_t.LaserLong = array(16, function(j) {
+				return { res:'lasers', sx:16*j, sy:0, sw:16, sh:RES.lasers.height, w:16, h:RES.lasers.height };
+			});
+
+			_t.TamaMax = array(4, function(i) {
+				return { res:'etama4', sx:64*i, sy:0, sw:64, sh:64, w:64, h:64 }
+			});
+
+			ieach([0, 128], function(i, x) {
+				ieach([0, 32, 64], function(j, y) {
+					_t['Enemy'+i+j] = array(4, function(i) {
+						return extend({ res:'stg1enm', sy:y, sw:32, sh:32, w:32, h:32 }, { sx:x+32*i });
+					});
+				});
+			});
+			_t.EnemyX = array(8, function(i) {
+				return extend({ res:'stg1enm', sy:255-48, sw:32, sh:48, w:32, h:48 }, { sx:32*i });
+			});
+			_t.Enemy2A = array(RES.enm2a.width / 32, function(i) {
+				return extend({ res:'enm2a', sy:0, sw:32, sh:32, w:32, h:32 }, { sx:32*i });
+			});
+			_t.Enemy2B = array(4, function(i) {
+				return extend({ res:'stg2enm', sy:128, sw:32, sh:32, w:32, h:32 }, { sx:32*i });
+			});
+			_t.Enemy2C = array(4, function(i) {
+				return extend({ res:'stg2enm', sy:96, sw:32, sh:32, w:32, h:32 }, { sx:32*i });
+			});
+
+			_t.Boss = [
+				{ res:'stg1enm2', sx:128, sy:0, sw:32, sh:48, w:32, h:48 }
+			];
+			lastOfArray(_t.Boss).next = 0;
+
+			_t.Boss.reset_index = _t.Boss.length;
+			array(5, function(i) {
+				_t.Boss.push(extend({ res:'stg1enm2', sy:0, sw:32, sh:48, w:32, h:48 }, { sx:128-32*i }));
+			});
+			array(5, function(i) {
+				_t.Boss.push(extend({ res:'stg1enm2', sy:0, sw:32, sh:48, w:32, h:48 }, { sx:32*i }));
+			});
+			lastOfArray(_t.Boss).next = 0;
+
+			_t.BossL = array(3, function(i) {
+				return extend({ res:'stg1enm2', sy:48, sw:32, sh:48, w:32, h:48 }, { sx:32*i });
+			});
+			_t.BossL.unshift({ res:'stg1enm2', sx:160, sy:0, sw:32, sh:48, w:32, h:48 });
+
+			_t.BossR = array(3, function(i) {
+				return extend({ res:'stg1enm2R', sy:0, sw:32, sh:48, w:32, h:48 }, { sx:32*i });
+			});
+			_t.BossR.push({ res:'stg1enm2', sx:192, sy:0, sw:32, sh:48, w:32, h:48 });
+
+			_t.Boss2A = [
+				{ res:'stg2enm', sx: 0, sy:256-48, sw:48, sh:48, w:48, h:48 },
+				{ res:'stg2enm', sx:48, sy:256-48, sw:48, sh:48, w:48, h:48 },
+			];
+
+			_t.Chiruno = [
+				{ res:'stg2enm2', sx:0, sy:0, sw:32, sh:64, w:32, h:64 },
+			];
+			lastOfArray(_t.Chiruno).next = 0;
+
+			_t.Chiruno.reset_index = _t.Chiruno.length;
+			_t.Chiruno.push({ res:'stg2enm2', sx: 80, sy: 0, sw:48, sh:64, w:48, h:64 });
+			_t.Chiruno.push({ res:'stg2enm2', sx:128, sy: 0, sw:48, sh:64, w:48, h:64 });
+			_t.Chiruno.push({ res:'stg2enm2', sx:176, sy: 0, sw:48, sh:64, w:48, h:64 });
+			_t.Chiruno.push({ res:'stg2enm2', sx:  0, sy:64, sw:48, sh:64, w:48, h:64 });
+			lastOfArray(_t.Chiruno).next = 0;
+
+			_t.ChirunoL = [
+				{ res:'stg2enm2', sx:32, sy:0, sw:48, sh:64, w:48, h:64 },
+			];
+			_t.ChirunoR = [
+				{ res:'stg2enm2R', sx: 0, sy:0, sw:48, sh:64, w:48, h:64 },
+			];
+
+			_t.EffBullet = array(RES.effbullet.width/16, function(i) {
+				return { res:'effbullet', sx:i*16, sy:0, sw:16, sh:16, w:16, h:16 };
+			});
+			_t.EffBoss = array(RES.effboss.width/16, function(i) {
+				return { res:'effboss', sx:i*16, sy:0, sw:16, sh:16, w:16, h:16 };
+			});
+			_t.EffEnemy = ieach([32,42,52,62,60,58,56,54,52,50,48,46,44,42,40,38,36,34,32,30,28,26], function(i, d, ls) {
+				ls.push(extend({ res:'eff00', sx:32, sy:0, sw:32, sh:32, rotate:-i*0.5 }, { w:d, h:d }));
+			}, []);
+			stayLastFrame(_t.EffEnemy);
+			_t.EffEnemy2 = ieach([32,42,52,62,60,58,56,54,52,50,48,46,44,42,40,38,36,34,32,30,28,26], function(i, d, ls) {
+				ls.push(extend({ res:'eff00', sx:64, sy:0, sw:32, sh:32 }, { w:d, h:d }));
+			}, []);
+			stayLastFrame(_t.EffEnemy2);
+			_t.EffPlayer = ieach([32,42,52,62,67,72,76,80,83,86,89,92,95,98,101,104,107,110,113,116,119,122], function(i, d, ls) {
+				ls.push(extend({ res:'eff00', sx:0, sy:0, sw:32, sh:32 }, { w:d*1.5, h:d*1.5 }));
+			}, []);
+			stayLastFrame(_t.EffPlayer);
+			ieach(['EffPiece', 'EffPieceR', 'EffPieceG', 'EffPieceB'], function(i, k) {
+				_t[k] = array(4, function(j) {
+					return { res:'eff00', sx:i*64+j*16, sy:32, sw:16, sh:16, w:16, h:16 };
+				});
+			});
+
+			_t.PowerUp = [
+				{ res:'powerup', sx:0, sy:0, sw:50, sh:8, w:50, h:8 },
+			];
+
+			_t.Cloud1 = [
+				{ res:'stg3bg', sx:0, sy:81, sw:148, sh:48, w:148, h:48 },
+			]
+			_t.Cloud2 = [
+				{ res:'stg3bg', sx:148, sy:80, sw:108, sh:32, w:108, h:32 },
+			]
+
+			_t.Enemy3A = array(4, function(i) {
+				return extend({ res:'stg3enm', sy:160, sw:32, sh:32, w:32, h:32 }, { sx:32*i });
+			})
+			_t.Enemy3B = array(4, function(i) {
+				return extend({ res:'stg3enm', sy:160, sw:32, sh:32, w:32, h:32 }, { sx:128+32*i });
+			})
+
+			_t.Meiling = [
+				{ res:'stg3enm', sx:0, sy:208, sw:48, sh:48, w:48, h:48 },
+			]
+			_t.EffMeiling = array(RES.effmeiling.width/48, function(i) {
+				return { res:'effmeiling', sx:i*48, sy:0, sw:48, sh:48, w:48, h:48 };
+			});
+
+			_t.Koakuma = newFrame('stg4enm', 0, 202, 32, 54);
+
+			function newBossFrame(name, fr_normal, fr_fire, fr_left, fr_right) {
+				var fs = fr_normal;
+				lastOfArray(fs).next = 0;
+
+				fs.reset_index = fs.length;
+				ieach(fr_fire, function(i, f) {
+					fs.push(f)
+				})
+
+				_t[name] = fs;
+				_t[name + 'L'] = fr_left;
+				_t[name + 'R'] = fr_right;
+			}
+
+			newBossFrame('Patchouli', [
+				newFrame('stg4enm', 32, 202, 32, 54),
+			], [
+				newFrame('stg4enm', 64, 202, 32, 54),
+			], [
+				newFrame('stg4enm',  96, 202, 48, 54),
+				newFrame('stg4enm', 144, 202, 48, 54),
+				newFrame('stg4enm', 192, 202, 48, 54),
+			], [
+				newFrame('stg4enmR',  0, 0, 48, 54),
+				newFrame('stg4enmR', 48, 0, 48, 54),
+				newFrame('stg4enmR', 96, 0, 48, 54),
+			])
+
+			newBossFrame('Sakuya', [
+				newFrame('stg5enm2',  0, 0, 32, 64),
+				newFrame('stg5enm2', 32, 0, 32, 64),
+				newFrame('stg5enm2', 64, 0, 32, 64),
+			], [
+				newFrame('stg5enm2', 96, 0, 32, 64),
+			], [
+				newFrame('stg5enm2', 128, 0, 32, 64),
+				newFrame('stg5enm2', 160, 0, 36, 64),
+				newFrame('stg5enm2', 196, 0, 40, 64),
+			], [
+				newFrame('stg5enmR',  0, 0, 40, 64),
+				newFrame('stg5enmR', 40, 0, 36, 64),
+				newFrame('stg5enmR', 76, 0, 32, 64),
+			])
+
+			newBossFrame('Remilia', [
+				newFrame('stg6enm2',   0, 0, 64, 80),
+			], [
+				newFrame('stg6enm2',   0, 0, 64, 80),
+			], [
+				newFrame('stg6enm2',  64, 0, 64, 80),
+				newFrame('stg6enm2', 128, 0, 64, 80),
+			], [
+				newFrame('stg6enmR',   0, 0, 64, 80),
+				newFrame('stg6enmR',  64, 0, 64, 80),
+			])
+
+			_t.Fire = array(4, function(i) {
+				return newFrame('etama3', i*32, 192, 32, 32, 0, 0, { rotate:true })
+			})
+			_t.Bat = array(4, function(i) {
+				return newFrame('stg6enm2', i*64, 80, 64, 32)
+			})
+
+			return _t;
+		})
+	</script>
+	<!-- path data -->
+	<script id="path">
+		(function(RES) {
+			// use curve fitter from http://jsfiddle.net/Gsz2a/
+			function pathFromBezier(bezs, speed) {
+				// bezs: array of [x1, y1, cx1, cy1, cx2, cy2, x2, y2, n]
+				return ieach(bezs, function(i, v, d) {
+					var n = Math.abs(v[8]);
+					array(n, function(i) {
+						var f = v[8] < 0 ? 1-i/n : i/n;
+						var x = bezier([v[0], v[2], v[4], v[6]], f),
+							y = bezier([v[1], v[3], v[5], v[7]], f);
+						d.push({ x:x-32, y:y-16, v:speed });
+					})
+					// object will not stop at the last point
+					if (!bezs[i+1])
+						d.push({ v:Inf })
+				}, [])
+			}
+			function pathFromTwoPoints(sfx, sfy, dfx, dfy, speed) {
+				return [
+					{ fx:sfx, fy:sfy, v:speed, },
+					{ fx:dfx, fy:dfy, },
+					{ v:Inf, },
+				]
+			}
+			function pathFlipFrom(pth) {
+				return ieach(pth, function(i, v, d) {
+					d.push({ x:GAME.rect.r+GAME.rect.l-v.x, y:v.y, v:v.v });
+				}, []);
+			}
+			var _t = {};
+
+			_t.s0A1 = pathFromBezier([
+				[300, 12, 342, 116, 289, 163, 223, 137, 10],
+				[223, 137, 134, 100, 36, 191, 81, 304, 10],
+				[81, 304, 120, 451, 130, 476, 167, 581, 10],
+			], 0.12);
+			_t.s0A2 = pathFlipFrom(_t.s0A1);
+
+			_t.s3A1 = pathFromBezier([
+				[12, 71, 73, 129, 165, 193, 207, 123, 10],
+				[100, 36, 128, -10, 248, 35, 207, 123, -10],
+				[99, 141, 74, 100, 73, 72, 100, 36, -10],
+				[99, 141, 153, 270, 236, 456, 295, 582, 10],
+			], 0.2);
+			_t.s3A2 = pathFlipFrom(_t.s3A1);
+
+			_t.s3A3 = pathFromBezier([
+				[28, 142, 83, 51, 184, -2, 257, 106, 10],
+				[257, 106, 280, 144, 440, 424, 508, 555, 20],
+			], 0.2);
+			_t.s3A4 = pathFlipFrom(_t.s3A3);
+
+			_t.s4A1 = pathFromBezier([
+				[26, 229, 192, 191, 292, 110, -1, -19, 10],
+			], 0.2);
+			_t.s4A2 = pathFlipFrom(_t.s4A1);
+
+			_t.s4A3 = pathFromBezier([
+				[29, 109, 140, 26, 101, 25, 207, 124, 10],
+				[207, 124, 237, 161, 279, 118, 252, 92, 10],
+				[252, 92, 229, 60, 184, 87, 207, 124, 10],
+				[207, 124, 237, 161, 279, 118, 252, 92, 10],
+				[252, 92, 218, 46, 219, 53, 181, 6, 10],
+			], 0.2);
+			_t.s4A4 = pathFlipFrom(_t.s4A3);
+
+			ieach(_t.s4AL = [
+				pathFromTwoPoints(0.2, 0, 0.2, 1, 0.3),
+				pathFromTwoPoints(0.5, 0, 0.5, 1, 0.3),
+				pathFromTwoPoints(0, 0.2, 1, 0.2, 0.3),
+				pathFromTwoPoints(1,0.25, 0,0.25, 0.3),
+				pathFromTwoPoints(0.8, 0, 0.8, 1, 0.3),
+				pathFromTwoPoints(0.5, 0, 0.5, 1, 0.3),
+				pathFromTwoPoints(1, 0.1, 0, 0.1, 0.3),
+				pathFromTwoPoints(0, 0.2, 1, 0.2, 0.3),
+			], function(i, pth) {
+				_t['s4AL' + i] = pth;
+			})
+
+			_t.s5A1 = pathFromTwoPoints(0, 0.30, 1, 0.25);
+			_t.s5A2 = pathFromTwoPoints(1, 0.25, 0, 0.20);
+			_t.s5A3 = pathFromTwoPoints(0, 0.20, 1, 0.15);
+			_t.s5A4 = pathFromTwoPoints(1, 0.35, 0, 0.30);
+
+			return _t;
+		})
+	</script>
+	<!-- fonts -->
+	<script id="fontmap">
+		(function(RES) {
+			var _t = {
+				cw: 16,
+				ch: 16,
+			}
+			ieach([
+				' !"#$%&\'()*+,-./',
+				'0123456789:;<=>?',
+				'@ABCDEFGHIJKLMNO',
+				'PQRSTUVWXYZ[`]`_',
+				' abcdefghijklmno',
+				'pqrstuvwxyz(|)~`',
+			], function(i, s) {
+				ieach(s, function(j, c) {
+					_t[c] = {
+						x: j * _t.cw,
+						y: i * _t.ch + 32,
+					};
+					if ('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 '.indexOf(c) >= 0)
+						$addCssRule('.char-'+c,
+							'display:block;float:left;width:14px;height:16px;'+
+							'background-position:-'+(_t[c].x+1)+'px -'+_t[c].y+'px;')
+				});
+			});
+			return _t;
+		})
+	</script>
+	<script id="nummap">
+		(function(RES) {
+			var _t = {
+				cw: 16,
+				ch: 16,
+			}
+			ieach('0123456789', function(j, c) {
+				_t[c] = {
+					x: j * _t.cw,
+					y: 0,
+				};
+			});
+			return _t;
+		})
+	</script>
+	<script id="nummap_small">
+		(function(RES) {
+			var _t = {
+				cw: 8,
+				ch: 8,
+			}
+			ieach('0123456789', function(j, c) {
+				_t[c] = {
+					x: j * _t.cw,
+					y: 0,
+				};
+			});
+			return _t;
+		})
+	</script>
+	<!-- strings -->
+	<script type="text/html" id="st_ask_continue"><strong>注意：</strong>以下不是红魔乡的内容<br />
+		继续玩可能出现节操过量流失或者弹幕过敏症状，作者不对产生的后果负任何责任。<br />
+		同意请解除暂停继续，不同意请回到标题画面</script>
+	<script type="text/html" id="st_bomb_sc">灵符「梦想封印」</script>
+	<!-- stage 1 -->
+	<script type="text/html" id="st_stg1_title">梦幻夜行绘卷  ~ Mystic Flier</script>
+	<script type="text/html" id="st_stg1_sc0">夜符「月光」</script>
+	<script type="text/html" id="st_stg1_sc1">夜符「夜雀」</script>
+	<script type="text/html" id="st_stg1_sc2">闇符「境界线」</script>
+	<script type="text/html" id="st_stg1_sc_ex1">闇符「镜界限」</script>
+	<script type="text/html" id="st_stg1_sc_ex2">闇符「铁十字军」</script>
+	<script type="text/html" id="st_stg1_sc_ex3">闇符「恶灵缠身」</script>
+	<script type="text/html" id="st_stg1_diag1">感觉真不错呢</script>
+	<script type="text/html" id="st_stg1_diag2">每次都在白天出来所以妖怪很少见<br />所以，这次才试着在夜里出来的……</script>
+	<script type="text/html" id="st_stg1_diag3">不过该往哪边走都搞不清楚了<br />这么暗</script>
+	<script type="text/html" id="st_stg1_diag4">但是……</script>
+	<script type="text/html" id="st_stg1_diag5">夜里的境内还真够浪漫呢<br />（←轻松状）</script>
+	<script type="text/html" id="st_stg1_diag6">说的就是嘛～<br />还会出现妖怪，真是受不了啊</script>
+	<script type="text/html" id="st_stg1_diag7">呃，<br />你谁啊？</script>
+	<script type="text/html" id="st_stg1_diag8">刚刚不是见过了吗<br />你难不成是鸟目吗？</script>
+	<script type="text/html" id="st_stg1_diag9">人类在一片漆黑的地方<br />当然看不清东西啊</script>
+	<script type="text/html" id="st_stg1_diag10">是吗？我感觉好像看到了<br />只在夜里才活动的人呢</script>
+	<script type="text/html" id="st_stg1_diag11">那种人你就算抓住吃了也<br />无所谓啊</script>
+	<script type="text/html" id="st_stg1_diag12">是—这样吗—</script>
+	<script type="text/html" id="st_stg1_diag13">不过，你很碍事呢</script>
+	<script type="text/html" id="st_stg1_diag14">在我眼前的就是吃了也没关系的人类？</script>
+	<script type="text/html" id="st_stg1_diag15">良药苦口<br />这句话你有没有听过？</script>
+	<script type="text/html" id="st_stg1_diag16">不过就算是良药<br >如果不喝了试试的话谁又知道效果呢</script>
+	<script type="text/html" id="st_stg1_diag17">...</script>
+	<script type="text/html" id="st_stg1_diag18">咦，你不是被打倒退场了吗？</script>
+	<script type="text/html" id="st_stg1_diag19">是—这样吗—</script>
+	<script type="text/html" id="st_stg1_diag20">真是麻烦...还想早点回去喝茶呢（←抬头望向右上角）</script>
+	<script type="text/html" id="st_stg1_diag21">嫌麻烦的话，点那个红叉好像没错呢</script>
+	<script type="text/html" id="st_stg1_diag22">哈？</script>
+	<script type="text/html" id="st_stg1_diag23">今天虽然身体有点迟钝，阴阳玉也不顺手，退治你还是没问题的</script>
+	<script type="text/html" id="st_stg1_diag24">把我退治掉，就没人陪你玩了<br />听说人类都是很怕寂寞的，所以...</script>
+	<script type="text/html" id="st_stg1_diag25">还是让我吃掉，和我变成一心同体吧！</script>
+	<script type="text/html" id="st_stg1_diag26">想和我一心同体的妖怪，从神社门口开始排，轮到你大概要到人间之里了</script>
+	<script type="text/html" id="st_stg1_diag27">不过如果给赛钱的话，是可以走特殊通道的呢</script>
+	<script type="text/html" id="st_stg1_diag28">不用排队的啦，都说了这个世(you)界(xi)只有我和你两个角色而已...</script>
+	<script type="text/html" id="st_stg1_diag29">在说梦话吗？我出门的时候可是还看到魔里沙的</script>
+	<script type="text/html" id="st_stg1_diag30">那个魔法使啊，就是个立绘而已哦<br />连对话都没有...</script>
+	<script type="text/html" id="st_stg1_diag31">说起来确实没有打招呼呢...</script>
+	<script type="text/html" id="st_stg1_diag32">不管了，那种事情还是先把你打倒，然后再去确认吧</script>
+	<script type="text/html" id="st_stg1_diag33">后悔药什么的，即使是竹林里的那家店也是没有卖的哦</script>
+	<!-- stage 2 -->
+	<script type="text/html" id="st_stg2_title">湖上的妖精  ~ Water Magus</script>
+	<script type="text/html" id="st_stg2_sc1">雹符「冰雹暴风」</script>
+	<script type="text/html" id="st_stg2_sc2">冻符「完美冻结」</script>
+	<script type="text/html" id="st_stg2_sc3">雪符「钻石风暴」</script>
+	<script type="text/html" id="st_stg2_sc_ex1">冻符「一日之寒」</script>
+	<script type="text/html" id="st_stg2_sc_ex2">雪符「冻空雷暴」</script>
+	<script type="text/html" id="st_stg2_sc_ex3">雪符「冰牢残雪」</script>
+	<script type="text/html" id="st_stg2_diag1">这座湖原来是如此宽广的吗？</script>
+	<script type="text/html" id="st_stg2_diag2">浓雾遮天视野不良啊。</script>
+	<script type="text/html" id="st_stg2_diag3">难不成我是路痴？</script>
+	<script type="text/html" id="st_stg2_diag4">如果迷路，定是妖精所为</script>
+	<script type="text/html" id="st_stg2_diag5">啊啦是吗？那么，带个路吧？<br />这附近有岛对不对？</script>
+	<script type="text/html" id="st_stg2_diag6">你啊，听了不要吓一大跳<br />在你面前可是有个强敌呢。</script>
+	<script type="text/html" id="st_stg2_diag7">靶子？<br />这还真是令人吃惊啊</script>
+	<script type="text/html" id="st_stg2_diag8">开什么玩笑啊～</script>
+	<script type="text/html" id="st_stg2_diag9">像你这样的话，就让我把你和<br />英吉利牛肉一起冰冻冷藏起来吧！！</script>
+	<script type="text/html" id="st_stg2_diag10">啊啊，可真是冷呢<br />这样会得空调病的啊</script>
+	<script type="text/html" id="st_stg2_diag11">这些妖精一只又一只的，没完没了了呢</script>
+	<script type="text/html" id="st_stg2_diag12">老娘是最强的！</script>
+	<script type="text/html" id="st_stg2_diag13">啊啊，这是第几只来着？（←记不清了）</script>
+	<script type="text/html" id="st_stg2_diag14">呃...一，二，九...</script>
+	<script type="text/html" id="st_stg2_diag15">总之是最强的那只！</script>
+	<script type="text/html" id="st_stg2_diag16">哦，是吗...</script>
+	<script type="text/html" id="st_stg2_diag17">我觉得一开始那只大妖精也很强的说</script>
+	<script type="text/html" id="st_stg2_diag18">大酱是我的！</script>
+	<script type="text/html" id="st_stg2_diag19">因为老娘是最强的！</script>
+	<script type="text/html" id="st_stg2_diag20">咦，妖精的社会已经发展到了这种程度了吗？<br />（果然人类不抓紧点不行了呢）</script>
+	<script type="text/html" id="st_stg2_diag21">所以说打倒你之后就不会有更强的妖精挡道了对吧？</script>
+	<script type="text/html" id="st_stg2_diag22">老娘挡道的本事也是最强的！</script>
+	<script type="text/html" id="st_stg2_diag23">这个妖精，其实是吃不好的牛肉吃坏脑子了吧</script>
+	<script type="text/html" id="st_stg2_diag24">总之，挡路的话还是要处理掉呢</script>
+	<!-- stage 3 -->
+	<script type="text/html" id="st_stg3_title">红色之境  ~ Scalet Land</script>
+	<script type="text/html" id="st_stg3_sc0">华符「卷柏 9」</script>
+	<script type="text/html" id="st_stg3_sc1">虹符「彩虹的风铃」</script>
+	<script type="text/html" id="st_stg3_sc2">幻符「华想梦葛」</script>
+	<script type="text/html" id="st_stg3_sc3">彩符「彩光乱舞」</script>
+	<script type="text/html" id="st_stg3_sc4">彩符「极彩台风」</script>
+	<script type="text/html" id="st_stg3_diag1">可恶，背水阵！</script>
+	<script type="text/html" id="st_stg3_diag2">你一个人也算是「阵」吗？</script>
+	<script type="text/html" id="st_stg3_diag3">你不要跟过来啊～</script>
+	<script type="text/html" id="st_stg3_diag4">谢谢你带路了～</script>
+	<script type="text/html" id="st_stg3_diag5">啊啦，就算你跟着我过来<br />这边也是什么都没有的啊？</script>
+	<script type="text/html" id="st_stg3_diag6">你是不会往啥都没有的地方逃的对吧？</script>
+	<script type="text/html" id="st_stg3_diag7">嗯——我要是逃的时候就只想着<br />逃的事情了</script>
+	<script type="text/html" id="st_stg3_diag8">顺便问下，你是什么人？</script>
+	<script type="text/html" id="st_stg3_diag9">哎—普通人哟</script>
+	<script type="text/html" id="st_stg3_diag10">刚才是你对我动手的吧？</script>
+	<script type="text/html" id="st_stg3_diag11">那个是普通地攻击一下的<br />但是，是你先做攻击的啊</script>
+	<script type="text/html" id="st_stg3_diag12">你是普通之外的存在</script>
+	<script type="text/html" id="st_stg3_diag13">我只是个当巫女的普通人来着啊</script>
+	<script type="text/html" id="st_stg3_diag14">那可真是太好了<br />确实有...</script>
+	<script type="text/html" id="st_stg3_diag15">巫女是吃了也没问题的人类<br />这种话在流传呢...</script>
+	<script type="text/html" id="st_stg3_diag16">什么传言啊！</script>
+	<script type="text/html" id="st_stg3_diag17">那么，领路就拜托你了哦</script>
+	<script type="text/html" id="st_stg3_diag18">对不起，大小姐～</script>
+	<!-- stage 4 -->
+	<script type="text/html" id="st_stg4_title">暗闇之馆  ~ Save the mind</script>
+	<script type="text/html" id="st_stg4_sc1">火符「火神之光 上级」</script>
+	<script type="text/html" id="st_stg4_sc2">土符「三石牌坊的震动」</script>
+	<script type="text/html" id="st_stg4_sc3">火&土符「环状熔岩带」</script>
+	<script type="text/html" id="st_stg4_sc4">金&水符「水银之毒」</script>
+	<script type="text/html" id="st_stg4_sc5">木&火符「森林大火」</script>
+	<script type="text/html" id="st_stg4_diag1">这家人屋里都不安窗户的吗？</script>
+	<script type="text/html" id="st_stg4_diag2">而且从外面看的时候<br />没感觉有这么大啊？</script>
+	<script type="text/html" id="st_stg4_diag3">那边的红白！</script>
+	<script type="text/html" id="st_stg4_diag4">不准在我的书房里撒泼</script>
+	<script type="text/html" id="st_stg4_diag5">书房？（红白？）</script>
+	<script type="text/html" id="st_stg4_diag6">这里的书价值能比得上你家神社<br />５年份的香火钱呢</script>
+	<script type="text/html" id="st_stg4_diag7">我那里就算年中无休也一个参拜客也没有哦</script>
+	<script type="text/html" id="st_stg4_diag8">嘛反正也就是有那种程度的价值了</script>
+	<script type="text/html" id="st_stg4_diag9">说起来在这么暗的屋子里<br />能读书吗？</script>
+	<script type="text/html" id="st_stg4_diag10">我可不是像你一样的鸟目<br />患者</script>
+	<script type="text/html" id="st_stg4_diag11">所以说～我才不是鸟目<br />呃</script>
+	<script type="text/html" id="st_stg4_diag12">切，才不是想说这个呢<br />你就是这里的主人吗？</script>
+	<script type="text/html" id="st_stg4_diag13">你找大小姐有什么事？</script>
+	<script type="text/html" id="st_stg4_diag14">放出的雾太多了，很令人为难</script>
+	<script type="text/html" id="st_stg4_diag15">那么，就绝对不可以让你<br />去见大小姐了</script>
+	<script type="text/html" id="st_stg4_diag16">不许碍事</script>
+	<script type="text/html" id="st_stg4_diag17">...话说回来，你是谁？</script>
+	<script type="text/html" id="st_stg4_diag18">说起来这个馆，从外面看<br />有这么宽敞么？</script>
+	<script type="text/html" id="st_stg4_diag19">因为家里有个喜欢摆弄空间的人<br />在啊</script>
+	<!-- stage 5 -->
+	<script type="text/html" id="st_stg5_title">红月之下那潇洒的随从</script>
+	<script type="text/html" id="st_stg5_sc0">幻在「钟表的遗骸」</script>
+	<script type="text/html" id="st_stg5_sc1">幻幽「迷幻的杰克」</script>
+	<script type="text/html" id="st_stg5_sc2">幻世「The World」</script>
+	<script type="text/html" id="st_stg5_sc3">女仆秘技「杀人人偶」</script>
+	<script type="text/html" id="st_stg5_diag1">啊—没法继续扫除了！</script>
+	<script type="text/html" id="st_stg5_diag2">这不是会惹大小姐生气吗！！</script>
+	<script type="text/html" id="st_stg5_diag3">还在这里影响扫除啊～</script>
+	<script type="text/html" id="st_stg5_diag4">你...<br />看上去不是这里的主人呢</script>
+	<script type="text/html" id="st_stg5_diag5">怎么回事？<br />是大小姐的客人吗？</script>
+	<script type="text/html" id="st_stg5_diag6">（看样子如果说是来踢馆的话<br />她就不会让我过了呢）</script>
+	<script type="text/html" id="st_stg5_diag7">不让你过哦</script>
+	<script type="text/html" id="st_stg5_diag8">大小姐很少见人的</script>
+	<script type="text/html" id="st_stg5_diag9">被软禁了吗？</script>
+	<script type="text/html" id="st_stg5_diag10">大小姐喜欢暗的地方</script>
+	<script type="text/html" id="st_stg5_diag11">就算是不黑暗的你也行啦</script>
+	<script type="text/html" id="st_stg5_diag12">在这一带放出大雾的<br />是你们对吧？</script>
+	<script type="text/html" id="st_stg5_diag13">那个很烦人啊<br />你们有什么目的？</script>
+	<script type="text/html" id="st_stg5_diag14">阳光很碍事啊<br />大小姐就喜欢昏昏暗暗的</script>
+	<script type="text/html" id="st_stg5_diag15">我可不喜欢那样<br />能请你们住手么？</script>
+	<script type="text/html" id="st_stg5_diag16">这个请你去和大小姐商量</script>
+	<script type="text/html" id="st_stg5_diag17">那就叫她出来</script>
+	<script type="text/html" id="st_stg5_diag18">喂，我没有理由让主人<br />遇到危险的对吧？</script>
+	<script type="text/html" id="st_stg5_diag19">我要是在这里大闹一场的话<br />她会不会出来呢？</script>
+	<script type="text/html" id="st_stg5_diag20">但是，你是见不到<br />大小姐的</script>
+	<script type="text/html" id="st_stg5_diag21">现在开始，即使要停止时间<br />我也要拖延你的脚步</script>
+	<script type="text/html" id="st_stg5_diag22">好了，现在我可以见她了吧</script>
+	<script type="text/html" id="st_stg5_diag23">好强...<br />但是，大小姐总会有办法的</script>
+	<!-- stage 6 -->
+	<script type="text/html" id="st_stg6_title">在乐园中洒下血土</script>
+	<script type="text/html" id="st_stg6_sc0">奇术「永恒的温柔」</script>
+	<script type="text/html" id="st_stg6_sc1">神罚「幼小的恶魔领主」</script>
+	<script type="text/html" id="st_stg6_sc2">狱罚「千根针的针山」</script>
+	<script type="text/html" id="st_stg6_sc3">神术「吸血鬼幻想」</script>
+	<script type="text/html" id="st_stg6_sc4">红符「绯红的专注」</script>
+	<script type="text/html" id="st_stg6_sc5">「红色的幻想乡」</script>
+	<script type="text/html" id="st_stg6_diag1">在大小姐生气之前<br />至少要消耗掉你一个BOMB才行～</script>
+	<script type="text/html" id="st_stg6_diag2">少废话，要不把你的使魔全放出来？</script>
+	<script type="text/html" id="st_stg6_diag3">差不多也该现出你的原形了吧？<br />大小姐？ </script>
+	<script type="text/html" id="st_stg6_diag4">...</script>
+	<script type="text/html" id="st_stg6_diag5">果然，人类还是不中用啊</script>
+	<script type="text/html" id="st_stg6_diag6">刚才的女仆原来是人类啊</script>
+	<script type="text/html" id="st_stg6_diag7">你这家伙，是杀人犯呢</script>
+	<script type="text/html" id="st_stg6_diag8">一个人的话又不是大量屠杀<br />所以没关系</script>
+	<script type="text/html" id="st_stg6_diag9">于是？</script>
+	<script type="text/html" id="st_stg6_diag10">是啊是啊，给人添麻烦了<br />你</script>
+	<script type="text/html" id="st_stg6_diag11">真武断呢。而且理由也不明</script>
+	<script type="text/html" id="st_stg6_diag12">总而言之，从这里离开<br />成吗？</script>
+	<script type="text/html" id="st_stg6_diag13">这里是我的城哦？</script>
+	<script type="text/html" id="st_stg6_diag14">要离开也该是你离开才对。</script>
+	<script type="text/html" id="st_stg6_diag15">我是说要你从这世上离开</script>
+	<script type="text/html" id="st_stg6_diag16">真是没办法呢</script>
+	<script type="text/html" id="st_stg6_diag17">虽然现在，已经吃得饱饱的了...</script>
+	<script type="text/html" id="st_stg6_diag18">当护卫的那个女仆<br />是你雇来的对吧？</script>
+	<script type="text/html" id="st_stg6_diag19">像你这样的深闺大小姐<br />一招就能打倒！</script>
+	<script type="text/html" id="st_stg6_diag20">咲夜是个优秀的扫除者</script>
+	<script type="text/html" id="st_stg6_diag21">托她的福，这里一颗头都没掉过哦</script>
+	<script type="text/html" id="st_stg6_diag22">你难道很强么？</script>
+	<script type="text/html" id="st_stg6_diag23">谁知道呢。<br />我又不怎么到外面去</script>
+	<script type="text/html" id="st_stg6_diag24">因为我对阳光很没辙</script>
+	<script type="text/html" id="st_stg6_diag25">...<br />似乎很有一手的样子呢</script>
+	<script type="text/html" id="st_stg6_diag26">在如此鲜红的月亮之下<br />我真的会杀掉你哦</script>
+	<script type="text/html" id="st_stg6_diag27">既然月亮如此鲜红</script>
+	<script type="text/html" id="st_stg6_diag28">看来会成为欢愉之夜呢</script>
+	<script type="text/html" id="st_stg6_diag29">看来会成为永远之夜呢</script>
+	<!-- sfx -->
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_graze" src="res/se_graze.mp3" replay-queue="4"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_pldead00" src="res/se_pldead00.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_cancel00" src="res/se_cancel00.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_invalid" src="res/se_invalid.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_ok00" src="res/se_ok00.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_select00" src="res/se_select00.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_pause" src="res/se_pause.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_plst00" src="res/se_plst00.mp3" replay-queue="4" replay-time="0.08"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_item00" src="res/se_item00.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_kira00" src="res/se_kira00.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_kira01" src="res/se_kira01.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_cat00" src="res/se_cat00.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_gun00" src="res/se_gun00.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_damage00" src="res/se_damage00.mp3" replay-queue="4"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_enep00" src="res/se_enep00.mp3" replay-queue="4"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_enep01" src="res/se_enep01.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_power0" src="res/se_power0.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_power1" src="res/se_power1.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_tan00" src="res/se_tan00.mp3" replay-queue="4"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_tan01" src="res/se_tan01.mp3" replay-queue="4"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_tan02" src="res/se_tan02.mp3" replay-queue="4"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_lazer00" src="res/se_lazer00.mp3" replay-queue="4"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_timeout" src="res/se_timeout.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_powerup" src="res/se_powerup.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_stg3_tan" src="res/se_stg3_tan.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_stg3_lz" src="res/se_stg3_lz.mp3"></audio>
+	<audio preload oncanplaythrough="this.complete=true" class="se" id="se_stg3_fire1" src="res/se_stg3_fire1.mp3"></audio>
+	<!--- bgms -->
+	<audio complete="true" loop="true" class="bgm" id="bgm_title" audio-src="res/bgm_title.mp3"></audio>
+	<!--
+	<audio complete="true" loop="true" class="bgm" id="bgm_stg1a" audio-src="res/bgm_stg1a.mp3"></audio>
+	<audio complete="true" loop="true" class="bgm" id="bgm_stg1b" audio-src="res/bgm_stg1b.mp3"></audio>
+	<audio complete="true" loop="true" class="bgm" id="bgm_stg2a" audio-src="res/bgm_stg2a.mp3"></audio>
+	<audio complete="true" loop="true" class="bgm" id="bgm_stg2b" audio-src="res/bgm_stg2b.mp3"></audio>
+	<audio complete="true" loop="true" class="bgm" id="bgm_stg3a" audio-src="res/bgm_stg3a.mp3"></audio>
+	<audio complete="true" loop="true" class="bgm" id="bgm_stg3b" audio-src="res/bgm_stg3b.mp3"></audio>
+	-->
+</div>
+<div class="main">
+	<div class="screen play absolute ui"
+		ui-show="GAME.state == GAME.states.RUNNING || GAME.state == GAME.states.PAUSE ||
+			GAME.state == GAME.states.OVER">
+		<div class="game absolute no-overflow" style="z-index:0;background:black">
+			<div class="game-size absolute no-overflow ui-obj bg-stg1" id="bg_stg1_bottom">
+				<canvas class="absolute game-size bg-stg1" style="height:2400px"
+					id="stg1cv1" bg-speed="0.01"></canvas>
+				<div class="absolute game-size"
+					style="height:350px;background:linear-gradient(rgba(0,0,0,0.8),transparent);
+						-webkit-transform:translate3d(0,0,0.1px)"></div>
+			</div>
+			<div class="game-size absolute no-overflow ui-obj bg-stg1" id="bg_stg1_top">
+				<canvas class="absolute game-size bg-stg1" style="height:1000px;"
+					id="stg1cv2" bg-speed="0.015"></canvas>
+				<div class="absolute game-size"
+					style="height:300px;background:linear-gradient(rgba(0,0,0,0.6),transparent);
+						-webkit-transform:translate3d(0,0,0.1px)"></div>
+			</div>
+			<div class="game-size absolute no-overflow ui-obj bg-stg2 bg-persp">
+				<canvas class="absolute game-size bg-stg2" style="width:640px;height:704px;"
+					fill-with="stg2bg" bg-speed="0.02" bg-speed-x="0.015"></canvas>
+				<canvas class="absolute game-size bg-stg2" style="width:640px;height:704px;opacity:0.7"
+					fill-with="stg2bg" bg-speed="0.02" bg-speed-x="-0.015" bg-offset="-200"></canvas>
+				<div class="absolute game-size"
+					style="height:300px;background:linear-gradient(rgba(0,0,100,0.7),transparent);
+						-webkit-transform:translate3d(0,0,0.1px)"></div>
+			</div>
+			<div class="game-size absolute no-overflow ui-obj bg-stg3 bg-persp" id="bg_stg3">
+				<canvas class="absolute game-size bg-stg3" style="height:3180px;"
+					id="stg3cv" bg-speed="0.02"></canvas>
+				<div class="absolute game-size" id="bg_stg3_mask"
+					style="height:500px;background:linear-gradient(rgba(190,171,107,0.9),transparent);
+						-webkit-transform:translate3d(0,0,0.1px)"></div>
+			</div>
+			<canvas class="game-size absolute no-overflow ui-obj bg-stg3" id="bg_stg3_dot"></canvas>
+			<div class="game-size absolute no-overflow ui-obj bg-stg4">
+				<div class="absolute game-size bg-stg4" style="height:3200px" bg-repeat="1200px"
+					id="stg4gnd" bg-speed="0.02" bg-trans="rotateX(60deg)">
+				</div>
+			</div>
+			<div class="game-size absolute no-overflow ui-obj bg-stg5" style="background:#000">
+				<div class="absolute game-size bg-stg5" style="height:3072px;"
+					id="stg5gnd" bg-speed="0.01" bg-trans="rotateX(30deg)">
+					<canvas class="absolute game-size bg-stg5"></canvas>
+					<canvas class="absolute game-size bg-stg5"></canvas>
+					<canvas class="absolute game-size bg-stg5"></canvas>
+				</div>
+			</div>
+			<div class="game-size absolute no-overflow ui-obj bg-stg6">
+				<div class="absolute game-size bg-stg6" style="height:2240px;"
+					id="stg6gnd" bg-speed="0.03" bg-trans="rotateX(-35deg)">
+				</div>
+			</div>
+			<div class="game-size absolute">
+				<div class="absolute game-size ui-obj anim-in-01s" id="bg_sc_rumia" bg-speed="0.1"
+					style="background:url(res/eff01.png);opacity:0;background-size:100%"></div>
+				<div class="absolute game-size ui-obj anim-in-01s" id="bg_sc_chiruno" bg-speed="0.1"
+					style="background:url(res/eff02.png);opacity:0;background-size:100%"></div>
+				<div class="absolute ui-obj anim-in-01s" id="bg_sc_meiling" bg-rotate="0.02"
+					style="background:url(res/eff03.png);opacity:0;background-size:100%;
+						width:600px;height:600px;margin-left:-108px;margin-top:-76px"></div>
+				<div class="absolute game-size ui-obj anim-in-01s" id="bg_sc_patchouli" bg-speed="-0.1"
+					style="background:url(res/eff04.png);opacity:0;background-size:50%"></div>
+				<div class="absolute ui-obj anim-in-01s" id="bg_sc_sakuya" bg-rotate="0.02"
+					style="background:url(res/eff05.png);opacity:0;background-size:100%;
+						width:600px;height:600px;margin-left:-108px;margin-top:-76px"></div>
+				<div class="absolute ui-obj anim-in-01s" id="bg_sc_remilia" bg-rotate="0.02"
+					style="background:url(res/eff06.png);opacity:0;background-size:100%;
+						width:600px;height:600px;margin-left:-108px;margin-top:-76px"></div>
+				<img class="absolute game-size ui-obj anim-in-01s" id="bg_score"
+					src="res/loading.png" style="opacity:0" />
+				<div class="absolute game-size ui-obj anim-in-01s" id="bg_bomb"
+					style="background:rgba(0,0,0,0.6);opacity:0"></div>
+			</div>
+		</div>
+		<canvas class="game absolute" id="canv"></canvas>
+		<div class="game absolute no-overflow diag">
+			<div class="fl sc">
+				<div class="face f0a f2 sc-bomb"></div>
+				<span class="text scbg1"></span>
+			</div>
+			<div class="fr sc">
+				<div class="face f3b" id="face_sc_rumia"></div>
+				<div class="face f5a" id="face_sc_chiruno"></div>
+				<div class="face f6a" id="face_sc_meiling"></div>
+				<div class="face f8a f2" id="face_sc_patchouli"></div>
+				<div class="face f9a" id="face_sc_sakuya"></div>
+				<div class="face f10a" id="face_sc_remilia"></div>
+				<span class="text scbg2"></span>
+			</div>
+			<div class="fl dg">
+				<div class="face f0a"></div>
+				<div class="face f0a f2"></div>
+				<div class="face f0b"></div>
+				<div class="face f0b f2"></div>
+				<div class="face f0c"></div>
+				<div class="face f0c f2"></div>
+			</div>
+			<div class="fr dg">
+				<div class="face f3a"></div>
+				<div class="face f3a f2"></div>
+				<div class="face f3b"></div>
+				<div class="face f3b f2"></div>
+				<div class="face f5a"></div>
+				<div class="face f5a f2"></div>
+				<div class="face f6a"></div>
+				<div class="face f6a f2"></div>
+				<div class="face f6b"></div>
+				<div class="face f6b f2"></div>
+				<div class="face f8a"></div>
+				<div class="face f8a f2"></div>
+				<div class="face f8b"></div>
+				<div class="face f8b f2"></div>
+				<div class="face f9a"></div>
+				<div class="face f9a f2"></div>
+				<div class="face f9b"></div>
+				<div class="face f9b f2"></div>
+				<div class="face f10a"></div>
+				<div class="face f10b"></div>
+			</div>
+			<div class="ft dg">
+				<div class="text"></div>
+			</div>
+		</div>
+		<div class="game pause mask absolute ui"
+			ui-show="GAME.state == GAME.states.PAUSE || GAME.state == GAME.states.OVER">
+			<div class="menu menu-pause-text"></div>
+			<form class="menu-pause ui" eval-radios
+				ui-focus="GAME.state == GAME.states.PAUSE || GAME.state == GAME.states.OVER"
+				onescape="GAME.state == GAME.states.PAUSE && changeGameState('RUNNING'); return false">
+				<div class="menu-line ui" ui-show="GAME.state == GAME.states.PAUSE">
+					<input type="radio" value="changeGameState('RUNNING')" />
+					<label class="menu menu-pause-continue"></label>
+				</div>
+				<div class="menu-line">
+					<input type="radio" value="changeGameState('TITLE')" />
+					<label class="menu menu-pause-title"></label>
+				</div>
+				<div class="menu-line">
+					<input type="radio" value="window.close()" />
+					<label class="menu menu-pause-quit"></label>
+				</div>
+			</form>
+		</div>
+		<div class="info absolute">
+			<div class="line">
+				<div class="label"><div class="label-max-point"></div></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.max_point+1e9, 1)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.max_point+1e9, 2)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.max_point+1e9, 3)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.max_point+1e9, 4)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.max_point+1e9, 5)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.max_point+1e9, 6)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.max_point+1e9, 7)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.max_point+1e9, 8)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.max_point+1e9, 9)"></div>
+			</div>
+			<div class="line">
+				<div class="label"><div class="label-point"></div></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.point+1e9, 1)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.point+1e9, 2)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.point+1e9, 3)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.point+1e9, 4)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.point+1e9, 5)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.point+1e9, 6)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.point+1e9, 7)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.point+1e9, 8)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.point+1e9, 9)"></div>
+			</div>
+			<div class="line-sep"></div>
+			<div class="line">
+				<div class="label"><div class="label-player"></div></div>
+				<div class="ui player" ui-show="STATICS.player > 0"></div>
+				<div class="ui player" ui-show="STATICS.player > 1"></div>
+				<div class="ui player" ui-show="STATICS.player > 2"></div>
+				<div class="ui player" ui-show="STATICS.player > 3"></div>
+				<div class="ui player" ui-show="STATICS.player > 4"></div>
+				<div class="ui player" ui-show="STATICS.player > 5"></div>
+				<div class="ui player" ui-show="STATICS.player > 6"></div>
+			</div>
+			<div class="line">
+				<div class="label"><div class="label-bomb"></div></div>
+				<div class="ui bomb" ui-show="STATICS.bomb > 0"></div>
+				<div class="ui bomb" ui-show="STATICS.bomb > 1"></div>
+				<div class="ui bomb" ui-show="STATICS.bomb > 2"></div>
+				<div class="ui bomb" ui-show="STATICS.bomb > 3"></div>
+				<div class="ui bomb" ui-show="STATICS.bomb > 4"></div>
+				<div class="ui bomb" ui-show="STATICS.bomb > 5"></div>
+				<div class="ui bomb" ui-show="STATICS.bomb > 6"></div>
+			</div>
+			<div class="line-sep"></div>
+			<div class="line-small">
+				<div class="power-bar absolute ui" ui-bind="STATICS.power+'px'" ui-bind-attr="this.style.width"></div>
+				<div class="label"><div class="label-power"></div></div>
+				<div class="ui float-left" ui-show="STATICS.power < 128">
+					<div class="ui" ui-class="'ui num n'+getNum(STATICS.power, 0)"></div>
+					<div class="ui" ui-class="'ui num n'+getNum(STATICS.power, 1)"></div>
+					<div class="ui" ui-class="'ui num n'+getNum(STATICS.power, 2)"></div>
+				</div>
+				<div class="ui power-max" ui-show="STATICS.power >= 128"></div>
+			</div>
+			<div class="line-small">
+				<div class="label"><div class="label-graze"></div></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.graze, 0)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.graze, 1)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.graze, 2)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.graze, 3)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.graze, 4)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.graze, 5)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.graze, 6)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.graze, 7)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.graze, 8)"></div>
+			</div>
+			<div class="line-small">
+				<div class="label"><div class="label-dot"></div></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.dot, 0)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.dot, 1)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.dot, 2)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.dot, 3)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.dot, 4)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.dot, 5)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.dot, 6)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.dot, 7)"></div>
+				<div class="ui" ui-class="'ui num n'+getNum(STATICS.dot, 8)"></div>
+			</div>
+		</div>
+		<div class="logo absolute"></div>
+		<div class="logo-text absolute">
+			<div class="tr">
+				<div class="td"><div class="font fa"></div></div>
+				<div class="td"><div class="font fb"></div></div>
+				<div class="td"></div>
+			</div>
+			<div class="tr">
+				<div class="td"></div>
+				<div class="td"><div class="font fc"></div></div>
+				<div class="td"></div>
+			</div>
+			<div class="tr">
+				<div class="td"></div>
+				<div class="td"><div class="font fd"></div></div>
+				<div class="td"><div class="font fe"></div></div>
+			</div>
+		</div>
+		<div class="fps absolute" style="color:white">
+			<div>fps: <span class="ui" ui-bind="(+GAME.fps).toFixed(2)+' / '+GAME.tick"></span></div>
+		</div>
+	</div>
+	<div class="screen select absolute no-overflow ui"
+		ui-show="GAME.state == GAME.states.SELECT || GAME.state == GAME.states.SELECT_DIFF ||
+			GAME.state == GAME.states.SELECT_CHAR || GAME.state == GAME.states.SELECT_BOMB ||
+			GAME.state == GAME.states.SELECT_STAGE">
+		<div class="absolute" style="color:white">
+			<span class="ui" ui-show="GAME.double_player_mode">Double Player Mode On</span> 
+			<span class="ui" ui-show="GAME.many_lives_mode">Many lives Mode On</span>
+		</div>
+		<form class="select-diff absolute ui" eval-radios
+			ui-focus="GAME.state == GAME.states.SELECT_DIFF"
+			onescape="changeGameState('TITLE')">
+			<div class="select-title"></div>
+			<div class="menu-line">
+				<input type="radio" value="changeGameState('SELECT_CHAR')" />
+				<label class="menu menu-diff-easy"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" value="changeGameState('SELECT_CHAR')" />
+				<label class="menu menu-diff-normal"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" value="changeGameState('SELECT_CHAR')" />
+				<label class="menu menu-diff-hard"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" value="changeGameState('SELECT_CHAR')" />
+				<label class="menu menu-diff-lunatic"></label>
+			</div>
+		</form>
+		<form class="select-char absolute ui" eval-radios
+			ui-focus="GAME.state == GAME.states.SELECT_CHAR"
+			onescape="changeGameState('SELECT_DIFF')">
+			<div class="select-title"></div>
+			<div class="menu-line absolute">
+				<input type="radio" value="changeGameState('SELECT_BOMB')" />
+				<label class="menu menu-char-reimu">
+					<img src="res/slpl00a.png" />
+					<img src="res/slpl00b.png" />
+				</label>
+			</div>
+			<div class="menu-line absolute">
+				<input type="radio" />
+				<label class="menu menu-char-marisa">
+					<img src="res/slpl01a.png" />
+					<img src="res/slpl01b.png" />
+				</label>
+			</div>
+		</form>
+		<form class="select-bomb absolute ui" eval-radios
+			ui-focus="GAME.state == GAME.states.SELECT_BOMB"
+			onescape="changeGameState('SELECT_CHAR')">
+			<div class="select-title"></div>
+			<div class="menu-line">
+				<input type="radio" value="isPracticeMode() ? changeGameState('SELECT_STAGE') : resetAndStart()" />
+				<label class="menu menu-bomb-a"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" />
+				<label class="menu menu-bomb-b"></label>
+			</div>
+		</form>
+		<form class="select-stage absolute ui" eval-radios
+			ui-focus="GAME.state == GAME.states.SELECT_STAGE"
+			onescape="changeGameState('SELECT_BOMB')">
+			<div class="menu-line">
+				<input type="radio" value="resetAndStart(newStage1())" />
+				<label class="menu char-cyan char-string" char-string="STAGE 1  000000000"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" value="resetAndStart(newStage2())" />
+				<label class="menu char-cyan char-string" char-string="STAGE 2  000000000"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" value="resetAndStart(newStage3())" />
+				<label class="menu char-cyan char-string" char-string="STAGE 3  000000000"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" value="resetAndStart(newStage4())" />
+				<label class="menu char-cyan char-string" char-string="STAGE 4  000000000"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" value="resetAndStart(newStage5())" />
+				<label class="menu char-cyan char-string" char-string="STAGE 5  000000000"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" value="resetAndStart(newStage6())" />
+				<label class="menu char-cyan char-string" char-string="STAGE 6  000000000"></label>
+			</div>
+		</form>
+	</div>
+	<div class="screen title absolute no-overflow ui"
+		ui-show="GAME.state == GAME.states.LOADING || GAME.state == GAME.states.TITLE ||
+			GAME.state == GAME.states.MENU || GAME.state == GAME.states.SELECT">
+		<div class="title-text absolute anim-in-04s">
+			<div class="font fa"></div>
+			<div class="font fb"></div>
+			<div class="font fc"></div>
+			<div class="font fd"></div>
+			<div class="font fe"></div>
+			<div class="title-eng absolute">
+				<div class="text text1"></div>
+				<div class="text text2"></div>
+			</div>
+		</div>
+		<form class="absolute ui" eval-radios
+			ui-show="GAME.state == GAME.states.TITLE"
+			ui-focus="GAME.state == GAME.states.TITLE">
+			<input type="radio" value="changeGameState('MENU')" />
+		</form>
+		<form class="menu-title ui" eval-radios
+			ui-focus="GAME.state == GAME.states.MENU"
+			onescape="checkRadio($i('input', $i('.menu-title-quit').parentNode))">
+			<div class="menu-line">
+				<input type="radio" value="changeGameState('SELECT_DIFF')" />
+				<label class="menu menu-title-start"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" disabled />
+				<label class="menu menu-title-extra-start"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" value="changeGameState('SELECT_DIFF')" />
+				<label class="menu menu-title-practice-start"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" disabled />
+				<label class="menu menu-title-replay"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" disabled />
+				<label class="menu menu-title-score"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" disabled />
+				<label class="menu menu-title-music-room"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" disabled />
+				<label class="menu menu-title-option"></label>
+			</div>
+			<div class="menu-line">
+				<input type="radio" value="window.close()" />
+				<label class="menu menu-title-quit"></label>
+			</div>
+		</form>
+	</div>
+	<div class="screen loading absolute ui"
+		ui-show="GAME.state == GAME.states.LOADING">
+		<div style="margin:20px">
+			<br />
+			<br />
+			<br />
+			<br />
+			<h4>
+				这个网页游戏是东方红魔乡的部分游戏内容的复刻。<br />
+				由于本人对弹幕游戏的理解问题和技术力的限制，不可避免地存在各种与原作不符的操作和设定，可能给您带来不好的游戏体验请注意。<br />
+				<br />
+				本游戏作者与上海爱丽丝幻乐团没有任何关系，原作品的版权归ZUN所有。<br />
+				请勿将本游戏用于任何商业用途。<br />
+				<br />
+				<div class="show-on-tested-browser hidden">
+					发现莉格露(BUG)请点
+					<a href="https://github.com/oxyflour/STGame/issues?state=open">这里</a>
+				</div>
+				<div class="hide-on-tested-browser hidden">
+					<big style="color:red">注意:</big>
+					你的浏览器没有测试过。有问题请点
+					<a href="https://github.com/oxyflour/STGame/issues?state=open">这里</a>
+					报告问题和你的浏览器版本
+				</div>
+			</h4>
+			<button class="ui hidden" ui-show="RES.process == 1" onclick="if (RES.process == 1) changeGameState('TITLE')"
+				style="font-size:100%;padding:0.5em">好的</button>
+			<p class="ui hidden" ui-show="RES.process < 1">loading <span class="ui" ui-bind="(RES.process*100).toFixed(1)+'%'">...</span></p>
+			<p class="ui hidden show-game-error">载入失败...你的浏览器可能不支持某些 html5 特性</p>
+		</div>
+		<form class="absolute ui" eval-radios
+			ui-focus="GAME.state == GAME.states.LOADING">
+			<input type="radio" value="if (RES.process == 1) changeGameState('TITLE')" />
+		</form>
+	</div>
+</div>
+<script src="js/game.js"></script>
+<script src="js/stg1.js"></script>
+<script src="js/stg2.js"></script>
+<script src="js/stg3.js"></script>
+<script src="js/stg4.js"></script>
+<script src="js/stg5.js"></script>
+<script src="js/stg6.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>

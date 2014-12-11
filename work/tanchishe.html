@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>贪吃蛇</title>
+<style type="text/css">
+#canvas {
+	border: solid;
+}
+</style>
+</head>
+<body>
+    <canvas id="canvas" height="600px" width="800px"></canvas>
+</body>
+<script type="text/javascript">
+var COLS = 20, ROWS = 20;
+var BLOCK_SIZE = 20, FPS = 10;
+var snake = new Snake();
+var game = new Game();
+var food = new Food();
+
+var canvas = document.getElementById('canvas');
+var context = canvas.getContext('2d');
+canvas.width = BLOCK_SIZE * COLS;
+canvas.height = BLOCK_SIZE * ROWS;
+
+function Game(){
+    this.update = function(){
+        var me = this;
+        this._interval = setTimeout(function(){
+            me.update();
+        }, 1000 / FPS);
+        context.clearRect(0, 0, BLOCK_SIZE * COLS, BLOCK_SIZE * ROWS);
+        snake.move();
+        snake.render(context);
+        food.add();
+        food.render(context);
+    };
+    
+    this.pause = function(){
+        clearTimeout(this._interval);
+        this._interval = false;
+    };
+    
+    this.resume = function(){
+        if(!this._interval)
+            this.update();
+    };
+    
+}
+
+function Food(){
+    this.isEated = true;
+    
+    this.add = function(){
+        if(this.isEated){
+            this.x = Math.floor(Math.random() * (COLS - 1)) * BLOCK_SIZE;
+            this.y = Math.floor(Math.random() * (ROWS - 1)) * BLOCK_SIZE;
+            if(snake.isBody(this.x, this.y)){
+                this.add();
+            }
+            this.isEated = false;
+        }       
+    };
+    
+    this.render = function(context){
+        render_block(context, this.x, this.y);
+    };
+}
+
+function Snake(){
+    this.UP = 0, this.DOWN = 1, this.LEFT = 2, this.RIGHT = 3;
+    this.body = [{x: BLOCK_SIZE * 2, y:0}, {x: BLOCK_SIZE, y:0}, {x: 0, y:0}];
+    this._direction = this.direction = this.LEFT;
+    
+    this.isBody = function(x, y){
+        var num = 0;
+        for(var i in this.body){
+            if(x == this.body[i].x && y ==  this.body[i].y){
+                num ++;
+            }
+        }
+        return num;
+    };
+    
+    this.render = function(context){
+        for(var i in this.body){
+            render_block(context, this.body[i].x, this.body[i].y);
+        }
+    };
+    
+    this.addBody = function(){
+        var last = this.body[this.body.length - 1];
+        var last_two = this.body[this.body.length - 2];
+        
+        if(last.x - last_two.x == 0){
+            this.body.push({x: last.x, y: last.y - last_two.y + last.y});
+        }else{
+            this.body.push({x: last.x - last_two.x + last.x, y: last.y});
+        }        
+    };
+    
+    this.move = function(){
+        if((this._direction == this.UP && this.direction != this.DOWN)
+                || (this._direction == this.DOWN && this.direction != this.UP)
+                || (this._direction == this.LEFT && this.direction != this.RIGHT)
+                || (this._direction == this.RIGHT && this.direction != this.LEFT)
+        )  
+            this._direction = this.direction;
+        
+        switch(this._direction){
+            case this.UP:
+                this.body.unshift({x: this.body[0].x, y: this.body[0].y - BLOCK_SIZE});
+                break;
+            case this.DOWN:
+                this.body.unshift({x: this.body[0].x, y: this.body[0].y + BLOCK_SIZE});
+                break;
+            case this.LEFT:
+                this.body.unshift({x: this.body[0].x + BLOCK_SIZE, y: this.body[0].y});
+                break;
+            case this.RIGHT:
+                this.body.unshift({x: this.body[0].x - BLOCK_SIZE, y: this.body[0].y});
+                break;
+        }
+
+        this.body.pop();
+        if(this.body[0].x == food.x && this.body[0].y == food.y){
+            this.addBody();
+            food.isEated = true;
+        }
+        this.isDied();
+    };
+    
+    this.isDied = function(){
+        if(this.body[0].x > canvas.width || this.body[0].x < 0 || this.body[0].y > canvas.height || this.body[0].y < 0
+                || this.isBody(this.body[0].x, this.body[0].y) == 2
+                
+        ){
+            game.pause();
+            alert('你屎了');
+        }  
+    };
+    
+    this.keydown = function(keyCode){
+        switch(keyCode){
+            case 37: //左边
+                if(this.direction != this.LEFT)  
+                    this.direction = this.RIGHT;break;
+            case 38: //上边
+                if(this.direction != this.DOWN)  
+                    this.direction = this.UP;break;
+            case 39: //右边
+                if(this.direction != this.RIGHT)  
+                    this.direction = this.LEFT;break;
+            case 40: //下的
+                if(this.direction != this.UP)  
+                    this.direction = this.DOWN;break;
+            case 80: //开始/暂停
+                game.pause();
+                break;
+            case 82: //开始/暂停
+                game.resume();
+                break;
+        }
+    };
+}
+function render_block(context, x, y){
+    context.strokeRect(x, y, BLOCK_SIZE, BLOCK_SIZE);
+}
+
+document.onkeydown = function(e){
+    var event = event || window.event;
+    snake.keydown(event.keyCode);
+}
+
+window.onload = function(){
+    game.update();
+}
+</script>
+</html>

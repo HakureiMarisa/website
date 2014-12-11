@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+    <div id="container" style="position: absolute; left: 0; top: 0; width: 480px; height: 320px; background: #eee;"></div>
+    <div id="fps" style="position: absolute; left: 0; top: 0;"></div>
+</body>
+<script type="text/javascript" src="../js/quark.base-1.0.0.js"></script>
+<script type="text/javascript">
+window.onload = init;
+
+var Words = function(props)
+{   
+    Words.superClass.constructor.call(this, props);
+    this.init();
+};
+Q.inherit(Words, Q.DisplayObject);
+
+Words.prototype.init = function()
+{    
+    this.speedY = this.speedX = 1;
+};
+
+Words.prototype.update = function(){
+    if(this.x <= this.width || (this.x >= this.width)){
+        this.x = -this.x;
+    }
+    if(this.y <= this.height || (this.y >= this.height)){
+        this.y = -this.y;
+    }
+    this.x += this.speedX;
+    this.y += this.speedY;
+}
+
+Words.prototype._draw = function(context)
+{   
+    console.log(context);
+    context.fillStyle = "#0f0";
+    context.font = "bold 20px Arial";
+    context.textBaseline = "top";
+    context.fillText("KingDZ原创", 50, 50);
+    //换种方式
+    context.font = "italic 20px 微软雅黑";
+    context.fillText("KingDZ原创", 50, 100);
+};
+
+function init()
+{       
+    //初始化游戏场景容器，设定背景渐变样式
+    container = Q.getDOM("container");
+    
+    //初始化渲染上下文，这里根据URL参数可选择是采用CanvasContext还是DOMContext
+    params = Q.getUrlParams();
+    var canvas = Quark.createDOM("canvas", {width:480, height:320, style:{position:"absolute",backgroundColor:"#eee"}});
+    container.appendChild(canvas);
+    context = new Quark.CanvasContext({canvas:canvas});
+    
+    //初始化舞台
+    stage = new Q.Stage({context:context, width:480, height:320, update: function(){
+        frames++;
+    }});
+    
+    //初始化timer并启动
+    timer = new Q.Timer(1000/30);
+    timer.addListener(stage);
+    timer.start();
+
+    //注册舞台事件，使舞台上的元素能接收交互事件
+    em = new Q.EventManager();
+    var events = Q.supportTouch ? ["touchend"] : ["mouseup"];
+    em.registerStage(stage, events, true, true);
+
+    //创建一只松鼠，并添加到舞台
+    var w = new Words({id:"squirrel", x:200, y:160, width:stage.width, height:stage.height, context: context});
+    stage.addChild(w);
+
+    //为松鼠添加touchend或mouseup事件侦听，控制其跳跃。
+    //w.addEventListener(events[0], squirrel.jump);
+}
+
+var frames = 0, fpsContainer = Quark.getDOM("fps");
+setInterval(function()
+{
+    fpsContainer.innerHTML = "FPS:" + frames;
+    frames = 0;
+}, 1000);
+
+</script>
+</html>

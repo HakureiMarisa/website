@@ -7,26 +7,42 @@
         this._interval = null;
     }
 
-    Game.prototype.start = function(){   
-    	if(this.init){
-    		this.init();
-    	}
+    Game.prototype.init = function(){
+        this.timer = {
+            now: Date.now(),
+            last: Date.now(),
+            step: 0
+        };
+    }
+    
+    Game.prototype.start = function(){
         this._run();
     };
     
     Game.prototype.pause = function(){   
-        clearInterval(this._interval);
+        this.status = 'pause';
     };
     
-    Game.prototype.resume = function(){   
+    Game.prototype.resume = function(){ 
+        this.status = 'running';
     	this._run();
     };
     
     Game.prototype._run = function(){   
     	var me = this;
-    	me.stage.step();
-    	this._interval = setTimeout(function(){
-    		me._run();
-		}, 1000/this.FPS);
+
+    	 var now = Date.now();       
+         var last = this.timer.last = this.timer.now;
+         this.timer.now = now;
+         this.timer.step = (now - last)/1000;
+    	
+    	me.stage.step(this.timer);
+    	if(this.status == 'pause'){
+    	    clearTimeout(this._interval);
+    	}else{
+    	    this._interval = setTimeout(function(){
+                me._run();
+            }, 1000/this.FPS);
+    	}  	
     };
 })();

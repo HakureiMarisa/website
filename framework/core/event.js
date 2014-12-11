@@ -1,5 +1,5 @@
 (function(){
-    var Event = JM.Event = JM.Event　|| {};
+    var Event = JM.Event = JM.Event || {};
     /**
      * 按钮Key的code映射表。
      */

@@ -121,14 +121,20 @@
                     rect = obj2;
                     circle = obj1;
                 }
+                //左上角
                 var lu = {x: rect.x, y: rect.y};
+                //左下角
                 var ld = {x: rect.x, y: rect.y + rect.height};
+                //右上角
                 var ru = {x: rect.x + rect.width, y: rect.y};
+                //右下角
                 var rd = {x: rect.x + rect.width, y: rect.y + rect.height};
                 if(this.calcDist(circle, lu) < circle.r 
                         || this.calcDist(circle, ld) < circle.r 
                         || this.calcDist(circle, ru) < circle.r
                         || this.calcDist(circle, rd) < circle.r
+                        || (lu.x < circle.x && circle.x < ru.x && ((lu.y - circle.r) < circle.y && circle.y < (rd.y + circle.r)))
+                        || (lu.y < circle.y && circle.y < ld.y && ((lu.x - circle.r) < circle.x && circle.x < (ru.x + circle.r)))
                 ){
                     return true;
                 }
