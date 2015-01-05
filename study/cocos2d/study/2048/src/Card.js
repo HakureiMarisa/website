@@ -65,3 +65,51 @@ var Card = cc.Sprite.extend({
         return parseInt(this.getChildByName('number').getString());
     }
 });
+
+var Score = cc.Sprite.extend({
+    ctor: function(pw){
+        this._super();
+        var text = new cc.LabelTTF('分数:');
+        text.setName('label');
+        text.setFontSize(21);
+        text.setAnchorPoint(0, 0.5);
+        this.addChild(text);
+ 
+        var score = new cc.LabelTTF('0');
+        this.addChild(score);
+        score.setName('score');
+        score.setFontSize(21);
+        score.setAnchorPoint(0, 0.5);
+        score.x = text.width;
+        this._setAttribute(pw);
+    },
+    _setAttribute: function(pw){
+        pw = pw || this.getParent().width;
+        var score = this.getChildByName('score');
+        var label = this.getChildByName('label');
+        this.x = (pw - (score.width + label.width)) / 2;
+    },
+    setScore: function(score){
+        var labelText = this.getChildByName('score');
+        labelText.setString(score);
+        this._setAttribute();
+    },
+    getScore:function(){
+        return parseInt(this.getChildByName('score').getString());
+    }
+});
+
+var NewGame = cc.Sprite.extend({
+   ctor: function(isNew){
+       this._super();
+       var t = new cc.LabelTTF('新游戏', 25);       
+       if(isNew){
+           t.setString('zz');
+       }
+       //this.addChild(t, 1);
+
+       var c = new cc.LayerColor(cc.color(143, 122, 102), t.width + 10, t.height + 10);
+       c.ignoreAnchorPointForPosition(false);
+       this.addChild(c, 1);       
+   } 
+});

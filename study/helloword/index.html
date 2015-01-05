@@ -15,6 +15,23 @@
 <script type="text/javascript" src="../../framework/core/Stage.js"></script>
 <script type="text/javascript" src="../../framework/core/Game.js"></script>
 <script type="text/javascript">
+$(function(){
+    var done = true;
+    $(document).keyup(function(){
+        if(done){ 
+            var date = new Date().getTime();
+            done = false;
+            console.log('zz');
+            while(true){
+                if((date + 1000) < new Date().getTime()){
+                    break;
+                }
+            }
+            done = true;
+        }       
+    });
+});
+
 function Word(opts){
     this.pause = false;
     JM.extend(this, opts);    
