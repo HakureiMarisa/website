@@ -113,14 +113,20 @@ var GameLayer = cc.Layer.extend({
                             event.getCurrentTarget().slideRight();
                             break;
                         case cc.KEY.x:
+                            console.log('-----显示-----');
+                            for(var i = 3; i >= 0; i--){
+                                console.log(event.getCurrentTarget().gameArray[0][i].getNumber(),event.getCurrentTarget().gameArray[1][i].getNumber(),event.getCurrentTarget().gameArray[2][i].getNumber(),event.getCurrentTarget().gameArray[3][i].getNumber());
+                            }
+                            
+                            console.log('-----剩余-----');
                             for(var i in event.getCurrentTarget().leftArray){
                                 console.log(event.getCurrentTarget().leftArray[i]);
                             };
+                                              
+                            console.log('-----位置-----');
                             for(var i = 3; i >= 0; i--){
-                                console.log(event.getCurrentTarget().gameArray[0][i].getNumber(),event.getCurrentTarget().gameArray[1][i].getNumber(),event.getCurrentTarget().gameArray[2][i].getNumber(),event.getCurrentTarget().gameArray[3][i].getNumber());
-                            }                   
-                            
-                            console.log(event.getCurrentTarget().gameArray[1][1].getPosition());
+                                console.log(event.getCurrentTarget().gameArray[0][i].getPosition(),event.getCurrentTarget().gameArray[1][i].getPosition(),event.getCurrentTarget().gameArray[2][i].getPosition(),event.getCurrentTarget().gameArray[3][i].getPosition());
+                            }                            
                             break;
                             
                     }
@@ -134,6 +140,26 @@ var GameLayer = cc.Layer.extend({
         this.reflashLeftArray();
         this.addCard();
         this.addCard();
+        /*
+        var move = new cc.MoveTo(1, 50, 50);
+        var moveback = new cc.MoveTo(0, 300, 300);
+        var action = new cc.Sequence(
+                move,
+                moveback
+        );
+        this.gameArray[1][1].setNumber(2048);
+        this.gameArray[1][1].runAction(action);
+        
+        var move1 = new cc.MoveTo(1, 55, 55);
+        var moveback1 = new cc.MoveTo(0, 305, 305);
+        var action1 = new cc.Sequence(
+                move1,
+                moveback1
+        );
+        this.gameArray[2][1].setNumber(1024);
+        this.gameArray[2][1].runAction(action1);
+        */
+        
     },
     initCardPosition: function(){
         var size = cc.director.getWinSize();
@@ -163,7 +189,7 @@ var GameLayer = cc.Layer.extend({
         this.leftArray = new Array();
         for(var i = 0; i < 4; i++){
             for(var j = 0; j < 4; j++){
-                if(this.gameArray[i][j].getNumber() == 0){
+                if(this.gameArray[i][j].getDirct() == 0){
                     this.leftArray[array_length] = [i, j];
                     array_length++;
                 }                
@@ -183,10 +209,10 @@ var GameLayer = cc.Layer.extend({
     isOver: function(){
         for(var i = 0; i < 4; i++){
             for(var j = 0; j < 4; j++){
-                if(j < 3 && this.gameArray[i][j].getNumber() == this.gameArray[i][j + 1].getNumber()){
+                if(j < 3 && this.gameArray[i][j].getDirct() == this.gameArray[i][j + 1].getDirct()){
                     return false;
                 }
-                if(i < 3 && this.gameArray[i][j].getNumber() == this.gameArray[i + 1][j].getNumber()){
+                if(i < 3 && this.gameArray[i][j].getDirct() == this.gameArray[i + 1][j].getDirct()){
                     return false;
                 }
             }
@@ -273,26 +299,65 @@ var GameLayer = cc.Layer.extend({
         for(var i=0; i<4; i++){
             for(var j=0; j<4; j++){                
                 for(var k = j + 1; k < 4; k++){
-                    if(this.gameArray[j][i].getNumber() == 0 && this.gameArray[k][i].getNumber() != 0){
-                        //this.gameArray[j][i].setNumber(this.gameArray[k][i].getNumber());
-                        this.slideCardAction(k, j, i);
-                        //this.gameArray[k][i].setNumber(0);
+                    var result  = this.slideCardAction(k, j, i);
+                    if(result == 1){
                         changed = true;
-                    }else{
-                        if(this.gameArray[k][i].getNumber() != 0){
-                            if(this.gameArray[k][i].getNumber() == this.gameArray[j][i].getNumber()){
-                                this.gameArray[j][i].setNumber(this.gameArray[j][i].getNumber() * 2);
-                                this.equalCardAction(this.gameArray[j][i]);
-                                this.gameArray[k][i].setNumber(0);
-                                changed = true;
-                            }
-                            break;
-                        }
-                    }                   
+                    }else if(result == 2){
+                        changed = true;
+                        break;
+                    }else if(result == 3){
+                        break;
+                    }
                 }
             }
         }
         this.afterAction(changed);
+    },
+    slideCardAction: function(fx, tx, y){
+        if(this.gameArray[tx][y].getDirct() == 0 && this.gameArray[fx][y].getDirct() != 0){
+            this.gameArray[tx][y].setDirct(this.gameArray[fx][y].getDirct());
+            this.gameArray[fx][y].setDirct(0);
+            var move = new cc.MoveTo(0.2, this.cardPosition[tx][y][0], this.cardPosition[tx][y][1]);
+            var moveback = new cc.MoveTo(0, this.cardPosition[fx][y][0], this.cardPosition[fx][y][1]);
+            var action = new cc.Sequence(
+                    move,
+                    new cc.CallFunc(this.onCallback1, this, [fx, tx, y]),
+                    moveback
+            );
+            this.gameArray[fx][y].runAction(action);
+            return 1;
+        }else if(this.gameArray[tx][y].getDirct() != 0 && this.gameArray[fx][y].getDirct() != 0){
+            if(this.gameArray[tx][y].getDirct() == this.gameArray[fx][y].getDirct()){
+                this.gameArray[tx][y].setDirct(this.gameArray[fx][y].getDirct() * 2);
+                this.gameArray[fx][y].setDirct(0);
+                var move = new cc.MoveTo(0.2, this.cardPosition[tx][y][0], this.cardPosition[tx][y][1]);
+                var moveback = new cc.MoveTo(0, this.cardPosition[fx][y][0], this.cardPosition[fx][y][1]);
+                var action = new cc.Sequence(
+                        move,
+                        new cc.CallFunc(this.onCallback1, this, [fx, tx, y]),
+                        moveback
+                );
+                this.gameArray[fx][y].runAction(action);
+                
+                /*var action = new cc.Sequence(new cc.ScaleTo(0.07,1.5), new cc.ScaleTo(0.07,1));
+                this.gameArray[tx][y].runAction(action);*/
+                var score = this.getChildByName('score');
+                score.setScore(score.getScore() + this.gameArray[fx][y].getDirct());
+                return 2;
+            }
+            return 3;
+        }
+        return 0;
+    },
+    onCallback1:function (target, data) {
+        var k = data[0];
+        var j = data[1];
+        var i = data[2];
+        this.gameArray[j][i].setNumber(this.gameArray[j][i].getDirct());
+        this.gameArray[k][i].setNumber(this.gameArray[k][i].getDirct());
+    },
+    equalCardAction:function(card){
+          
     },
     afterAction: function(changed){ 
         if(changed){
@@ -304,37 +369,6 @@ var GameLayer = cc.Layer.extend({
                 }
             } 
         }              
-    },
-    slideCardAction: function(k, j, i){
-        var move = new cc.MoveTo(1, this.cardPosition[j][i][0], this.cardPosition[j][i][1]);
-        var moveback = new cc.MoveTo(0, this.cardPosition[k][i][0], this.cardPosition[k][i][1]);
-        console.log(this.cardPosition[j][i], this.cardPosition[k][i]);
-        console.log(this.gameArray[k][i].getPosition());
-        
-        var action = cc.Sequence.create(
-                cc.MoveBy.create(1, cc.p(100, 0)),
-                cc.CallFunc.create(this.onCallback1, this));
-    sp.runAction(action);
-
-    onCallback1:function () {
-           //doThings();
-        },
-        
-        this.gameArray[k][i].runAction(move);
-        this.gameArray[j][i].setNumber(this.gameArray[k][i].getNumber());
-        this.gameArray[k][i].setNumber(0);
-        console.log(this.gameArray[k][i].getPosition());
-        this.gameArray[k][i].runAction(moveback);
-        //var move = new cc.CallFunc(this.removeSprite, this);
-    },
-    _onMove: function(){
-        
-    },
-    equalCardAction:function(card){
-        var action = cc.Sequence.create(new cc.ScaleTo(0.07,1.5), new cc.ScaleTo(0.07,1));
-        card.runAction(action);
-        var score = this.getChildByName('score');
-        score.setScore(score.getScore() + card.getNumber());        
     },
     newGame: function(){
         console.log('新游戏');
